@@ -34,18 +34,19 @@ public class PhotoViewer extends JFrame {
 	private void setupUI() {
 		makeMenu();
 		
+		// panel for pics
+		JPanel picBrowser = new JPanel();
+//		PicViewer picBrowser = new PicViewer("label");
+		this.getContentPane().add(picBrowser, BorderLayout.CENTER);
+		
+		makeToolBar();
+		
 		// status bar
 		JPanel statusBar = new JPanel();
 		status = new JLabel("Welcome to Zack's photo viewer");
 		statusBar.setBackground(new Color(220,220,220));
 		statusBar.add(status);
 		this.getContentPane().add(statusBar, BorderLayout.SOUTH);
-		
-		// panel for pics
-		PicViewer picBrowser = new PicViewer("label");
-		this.getContentPane().add(picBrowser, BorderLayout.CENTER);
-		
-		makeToolBar();
 		
 		this.pack();
 	}
