@@ -32,11 +32,42 @@ public class PhotoViewer extends JFrame {
 	}
 
 	private void setupUI() {
+		makeMenu();
+		
+		// status bar
+		JPanel statusBar = new JPanel();
+		status = new JLabel("Welcome to Zack's photo viewer");
+		statusBar.setBackground(new Color(220,220,220));
+		statusBar.add(status);
+		this.getContentPane().add(statusBar, BorderLayout.SOUTH);
+		
+		// panel for pics
+		PicViewer picBrowser = new PicViewer("label");
+		this.getContentPane().add(picBrowser, BorderLayout.CENTER);
+		
+		makeToolBar();
+		
+		this.pack();
+	}
+
+	private void makeToolBar() {
+		// tool bar on the left
+		JPanel toolBar = new JPanel();
+		toolBar.setLayout(new BoxLayout(toolBar, BoxLayout.PAGE_AXIS));
+		toolBar.setBackground(new Color(200, 200, 200));
+		toolBar.add(new JLabel("Tool bar:"));
+		toolBar.add(new JToggleButton("People"));
+		toolBar.add(new JToggleButton("Places"));
+		toolBar.add(new JToggleButton("School"));
+		this.getContentPane().add(toolBar, BorderLayout.EAST);
+	}
+
+	private void makeMenu() {
 		// setup menu bar
 		JMenuBar menuBar = new JMenuBar();
 		JMenu fileMenu = new JMenu("File");
 		JMenu viewMenu = new JMenu("View");
-		
+				
 		// file menu
 		JMenuItem imp = new JMenuItem("Import");
 		JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
@@ -71,29 +102,6 @@ public class PhotoViewer extends JFrame {
 		menuBar.add(viewMenu);
 		
 		this.setJMenuBar(menuBar);
-		
-		// status bar
-		JPanel statusBar = new JPanel();
-		status = new JLabel("Welcome to Zack's photo viewer");
-		statusBar.setBackground(new Color(220,220,220));
-		statusBar.add(status);
-		this.getContentPane().add(statusBar, BorderLayout.SOUTH);
-		
-		// panel for pics
-		PicViewer picBrowser = new PicViewer("label");
-		this.getContentPane().add(picBrowser, BorderLayout.CENTER);
-		
-		// tool bar on the left
-		JPanel toolBar = new JPanel();
-		toolBar.setLayout(new BoxLayout(toolBar, BoxLayout.PAGE_AXIS));
-		toolBar.setBackground(new Color(200, 200, 200));
-		toolBar.add(new JLabel("Tool bar:"));
-		toolBar.add(new JToggleButton("People"));
-		toolBar.add(new JToggleButton("Places"));
-		toolBar.add(new JToggleButton("School"));
-		this.getContentPane().add(toolBar, BorderLayout.EAST);
-		
-		this.pack();
 	}
 
 	private void updateStatus(String string) {
