@@ -2,9 +2,6 @@ package photoviewer;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.event.ActionListener;
-
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.event.ChangeListener;
@@ -25,10 +22,6 @@ public class PicViewer extends JComponent {
 	private void setModel(PVModel m) {
 		this.model = m;
 		model.addChangeListener(event -> repaint());
-	}
-	
-	public void addActionListener(ActionListener listener) {
-		model.addActionListener(listener);
 	}
 	
 	@Override
