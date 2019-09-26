@@ -8,21 +8,26 @@ import java.awt.event.ActionListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JToggleButton;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
 
 public class PhotoViewer extends JFrame {
 	
 	private Dimension size = new Dimension(600,400);
 	private JLabel status;
+	private PicViewer picViewer;
 	
 	public PhotoViewer() {
 		super("Zack's Photo Viewer");
@@ -35,9 +40,9 @@ public class PhotoViewer extends JFrame {
 		makeMenu();
 		
 		// panel for pics
-		JPanel picBrowser = new JPanel();
-//		PicViewer picBrowser = new PicViewer("label");
-		this.getContentPane().add(picBrowser, BorderLayout.CENTER);
+//		JLabel picViewer = new JPanel();
+		picViewer = new PicViewer("label");
+		this.getContentPane().add(picViewer, BorderLayout.CENTER);
 		
 		makeToolBar();
 		
@@ -72,11 +77,24 @@ public class PhotoViewer extends JFrame {
 		// file menu
 		JMenuItem imp = new JMenuItem("Import");
 		JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
-		PhotoViewer parent = this;
 		imp.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent ev) {
 	            // open JFileChooser
-				fileChooser.showOpenDialog(parent);
+				FileFilter filter = new FileNameExtensionFilter("JPEG file", "jpg", "jpeg");
+	            fileChooser.setFileFilter(filter);
+	            int response = fileChooser.showOpenDialog(null);
+	            try {
+	            	if (response == JFileChooser.APPROVE_OPTION) {
+		                String pathName = fileChooser.getSelectedFile().getPath();
+		                ImageIcon image = new ImageIcon(pathName);
+		                picViewer.setImage(image.getImage());
+		            } else {
+		                JOptionPane.showMessageDialog(null, "Feel Free to Look Later");
+		            }
+	            } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
 			}
 		});
 		JMenuItem delete = new JMenuItem("Delete");
