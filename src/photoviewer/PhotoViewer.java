@@ -47,8 +47,8 @@ public class PhotoViewer extends JFrame {
 		JScrollPane scroll = new JScrollPane();
 		picViewer = new PicViewer("label");
 		scroll.getViewport().add(picViewer);
-		scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-		scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		this.getContentPane().add(scroll, BorderLayout.CENTER);
 		
 		makeToolBar();
