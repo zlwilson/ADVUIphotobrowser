@@ -34,7 +34,7 @@ public class PVView {
 	private int width;
 	private int height;
 	
-	public LineAnnotation localAnnotation = new LineAnnotation(null, null);
+	public LineAnnotation localAnnotation = new LineAnnotation();
 	
 	public PVView(String label, PicViewer picViewer) {
 		this.controller = picViewer;
@@ -56,16 +56,29 @@ public class PVView {
 			public void mousePressed(MouseEvent e) {
 				// TODO draw strokes
 				if (!controller.getModel().isFaceUp()) {
-					localAnnotation.start = e.getPoint();
+					localAnnotation.active = true;
+					localAnnotation.points.add(e.getPoint());
 				}
 			}
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				if (!controller.getModel().isFaceUp()) {
-					localAnnotation.end = e.getPoint();
-					controller.addLineAnnotation(localAnnotation);
-					localAnnotation = new LineAnnotation(null,null);
+					localAnnotation.points.add(e.getPoint());
+//					controller.addLineAnnotation(localAnnotation);
+					controller.getModel().addLineAnnotation(localAnnotation);
+					
+					System.out.println("PVView - localA[].size: "+ localAnnotation.points.size());
+					
 					controller.repaint();
+					
+					System.out.println("PVView - localA[1]: "+ localAnnotation.points.get(1));
+					
+					localAnnotation.active = false;
+					localAnnotation.points.clear();
+					
+					System.out.println("PVView - la[] size: "+ controller.getModel().lineAnnotations.size());
+					System.out.println("PVView - la[1].points[] size: "+ controller.getModel().lineAnnotations.get(0).points.size());
+					System.out.println("PVView - la[1].points[0]: "+ controller.getModel().lineAnnotations.get(0).points.get(0));
 				}
 			}
 			@Override
@@ -77,7 +90,7 @@ public class PVView {
 		controller.addMouseMotionListener(new MouseMotionAdapter(){
 			public void mouseDragged(MouseEvent e) {
 				if (!controller.getModel().isFaceUp()) {
-					localAnnotation.end = e.getPoint();
+					localAnnotation.points.add(e.getPoint());
 					controller.repaint();
 				}
 			}
@@ -98,7 +111,7 @@ public class PVView {
 		return new Dimension(300, 200);
 	}
 
-	public void paint(Graphics g, PicViewer picViewer) {		
+	public void paint(Graphics g, PicViewer picViewer) {
 		PVModel model = this.controller.getModel();
 		
 		if (img == null) {
@@ -111,14 +124,18 @@ public class PVView {
 				// paint image
 				g.drawImage(img.getImage(), 0, 0, null);
 			} else {
-				// paint back for annotations
+				// paint white background for annotations
 				g.setColor(Color.WHITE);
 				g.fillRect(0, 0, img.getIconWidth(), img.getIconHeight());
 				
 				g.setColor(Color.RED);
+				
+				// draw past annotations
 				drawLines(g, controller.getModel().lineAnnotations);
-				if (localAnnotation.start != null && localAnnotation.end != null) {
-					drawLine(g, localAnnotation);
+				
+				// draw active annotation
+				if (localAnnotation.active) {
+					drawCurve(g, localAnnotation);
 				}
 			}
 		}
@@ -130,17 +147,21 @@ public class PVView {
 	
 	// draw all lines in line annotation list (from the model)
 	private void drawLines(Graphics g, ArrayList<LineAnnotation> lineAnnotations) {
-		Graphics2D g2d = (Graphics2D) g;
-		
 		for (int i = 0; i < lineAnnotations.size(); i++) {
-			drawLine(g, lineAnnotations.get(i));
+			drawCurve(g, lineAnnotations.get(i));
 		}
-		
 	}
 	
-	// draw a line based on a line annotation object
-	private void drawLine(Graphics g, LineAnnotation la) {
+	// draw a curve based on a line annotation object
+	private void drawCurve(Graphics g, LineAnnotation annotation) {		
+		for (int i = 0; i < annotation.points.size()-1; i++) {
+			drawLine(g, annotation.points.get(i), annotation.points.get(i+1));
+		}
+	}
+	
+	// draw a line based on two points
+	private void drawLine(Graphics g, Point start, Point end) {
 		Graphics2D g2d = (Graphics2D) g;
-		g2d.drawLine(la.start.x, la.start.y, la.end.x, la.end.y);
+		g2d.drawLine(start.x, start.y, end.x, end.y);
 	}
 }
