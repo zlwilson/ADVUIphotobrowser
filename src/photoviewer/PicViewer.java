@@ -12,7 +12,6 @@ import javax.swing.event.ChangeListener;
 public class PicViewer extends JComponent {
 	private PVModel model;
 	private PVView view;
-	private Image img;
 	
 	public PicViewer(String label){
 		setModel(new PVModel());
@@ -40,11 +39,11 @@ public class PicViewer extends JComponent {
 	@Override
 	public void paintComponent(Graphics g){
 		System.out.println("trying to paint (PicViewer)");
-		view.paint(g, this, this.img);
+		view.paint(g, this);
 	}
 
-	public void setImage(Image image) {
-		this.img = image;
+	public void setImage(ImageIcon image) {
+		this.view.setImage(image);
 		System.out.println("image set (PicViewer)");
 		this.repaint();
 	}

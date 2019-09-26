@@ -3,9 +3,12 @@ package photoviewer;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
+import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -18,6 +21,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -40,9 +44,12 @@ public class PhotoViewer extends JFrame {
 		makeMenu();
 		
 		// panel for pics
-//		JLabel picViewer = new JPanel();
+		JScrollPane scroll = new JScrollPane();
 		picViewer = new PicViewer("label");
-		this.getContentPane().add(picViewer, BorderLayout.CENTER);
+		scroll.getViewport().add(picViewer);
+		scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		this.getContentPane().add(scroll, BorderLayout.CENTER);
 		
 		makeToolBar();
 		
@@ -87,9 +94,9 @@ public class PhotoViewer extends JFrame {
 	            	if (response == JFileChooser.APPROVE_OPTION) {
 		                String pathName = fileChooser.getSelectedFile().getPath();
 		                ImageIcon image = new ImageIcon(pathName);
-		                picViewer.setImage(image.getImage());
+		                picViewer.setImage(image);
 		            } else {
-		                JOptionPane.showMessageDialog(null, "Feel Free to Look Later");
+		                JOptionPane.showMessageDialog(null, "Pick one later then");
 		            }
 	            } catch (Exception e) {
                     // TODO Auto-generated catch block
