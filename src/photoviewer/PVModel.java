@@ -4,6 +4,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public class PVModel {
@@ -27,6 +28,17 @@ public class PVModel {
 	
 	public boolean isFaceUp() {
 		return faceUp;
+	}
+	
+	public void setFaceUp(){
+		faceUp = !faceUp;
+		fireChangeListener();
+	}
+	
+	private void fireChangeListener() {
+		for (ChangeListener l : changeListeners) {
+			l.stateChanged(new ChangeEvent(this));
+		}
 	}
 
 }

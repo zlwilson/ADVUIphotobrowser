@@ -24,7 +24,7 @@ public class PicViewer extends JComponent {
 
 	private void setModel(PVModel m) {
 		this.model = m;
-//		model.addChangeListener(event -> repaint());
+		model.addChangeListener(event -> repaint());
 	}
 	
 	public void addActionListener(ActionListener listener) {
@@ -38,13 +38,11 @@ public class PicViewer extends JComponent {
 	
 	@Override
 	public void paintComponent(Graphics g){
-		System.out.println("trying to paint (PicViewer)");
 		view.paint(g, this);
 	}
 
 	public void setImage(ImageIcon image) {
 		this.view.setImage(image);
-		System.out.println("image set (PicViewer)");
 		this.revalidate();
 	}
 
@@ -54,5 +52,9 @@ public class PicViewer extends JComponent {
 
 	public PVModel getModel() {
 		return this.model;
+	}
+	
+	public void doubleClick() {
+		this.model.setFaceUp();
 	}
 }

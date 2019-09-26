@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.File;
@@ -25,6 +27,8 @@ public class PVView {
 	private PicViewer controller;
 	private String label;
 	private ImageIcon img;
+	private int width;
+	private int height;
 	
 	public PVView(String label, PicViewer picViewer) {
 		this.controller = picViewer;
@@ -34,41 +38,57 @@ public class PVView {
 	}
 	
 	private void setupListeners() {
-		controller.addChangeListener(new ChangeListener(){
+		controller.addMouseListener(new MouseListener(){
+		    @Override
+		    public void mouseClicked(MouseEvent e){
+		        if(e.getClickCount()==2){
+		            // your code here
+		        	System.out.println("double click!");
+		        	controller.doubleClick();
+		        }
+		    }
 
 			@Override
-			public void stateChanged(ChangeEvent e) {
-				// TODO Auto-generated method stub
-				
-			}			
+			public void mousePressed(MouseEvent e) { }
+			@Override
+			public void mouseReleased(MouseEvent e) { }
+			@Override
+			public void mouseEntered(MouseEvent e) { }
+			@Override
+			public void mouseExited(MouseEvent e) { }
 		});
 	}
 
 	public Dimension getPreferredSize() {
 		if (img != null) {
-			int imgWidth = img.getIconWidth();
-			int imgHeight = img.getIconHeight();
-			System.out.println("Preferred size = image");
-			return new Dimension(imgWidth,imgHeight);
+			return new Dimension(img.getIconWidth(),img.getIconHeight());
+		} else {
+			width = 300;
+			height = 200;
 		}
-		System.out.println("Preferred size != image");
-		return new Dimension(200,52);
+		return new Dimension(width, height);
+	}
+	
+	public Dimension setMinimumSize() {
+		return new Dimension(300, 200);
 	}
 
 	public void paint(Graphics g, PicViewer picViewer) {
-		// TODO Auto-generated method stub
-		System.out.println("in paint (PVView)");
 		PVModel model = this.controller.getModel();
 		
 		if (img == null) {
 			g.drawString("import a photo from the file menu", 10, 50);
 		} else {
+			// black background for photos
+			g.setColor(Color.BLACK);
+			g.fillRect(0,0, controller.getSize().width, controller.getSize().height);
 			if (model.isFaceUp()) {
 				// paint image
 				g.drawImage(img.getImage(), 0, 0, null);
 			} else {
 				// paint back for annotations
-				g.drawImage(img.getImage(), 0, 0, null);
+				g.setColor(Color.WHITE);
+				g.fillRect(0, 0, img.getIconWidth(), img.getIconHeight());
 			}
 		}
 	}
