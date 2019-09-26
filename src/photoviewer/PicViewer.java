@@ -50,4 +50,8 @@ public class PicViewer extends JComponent {
 	public void doubleClick() {
 		this.model.setFaceUp();
 	}
+
+	public void addLineAnnotation(LineAnnotation la) {
+		this.model.addLineAnnotation(la);
+	}
 }

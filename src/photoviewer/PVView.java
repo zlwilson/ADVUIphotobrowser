@@ -4,14 +4,18 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -30,6 +34,8 @@ public class PVView {
 	private int width;
 	private int height;
 	
+	public LineAnnotation localAnnotation = new LineAnnotation(null, null);
+	
 	public PVView(String label, PicViewer picViewer) {
 		this.controller = picViewer;
 		this.label = label;
@@ -42,20 +48,39 @@ public class PVView {
 		    @Override
 		    public void mouseClicked(MouseEvent e){
 		        if(e.getClickCount()==2){
-		            // your code here
-		        	System.out.println("double click!");
 		        	controller.doubleClick();
 		        }
 		    }
 
 			@Override
-			public void mousePressed(MouseEvent e) { }
+			public void mousePressed(MouseEvent e) {
+				// TODO draw strokes
+				if (!controller.getModel().isFaceUp()) {
+					localAnnotation.start = e.getPoint();
+				}
+			}
 			@Override
-			public void mouseReleased(MouseEvent e) { }
+			public void mouseReleased(MouseEvent e) {
+				if (!controller.getModel().isFaceUp()) {
+					localAnnotation.end = e.getPoint();
+					controller.addLineAnnotation(localAnnotation);
+					localAnnotation = new LineAnnotation(null,null);
+					controller.repaint();
+				}
+			}
 			@Override
 			public void mouseEntered(MouseEvent e) { }
 			@Override
 			public void mouseExited(MouseEvent e) { }
+		});
+		
+		controller.addMouseMotionListener(new MouseMotionAdapter(){
+			public void mouseDragged(MouseEvent e) {
+				if (!controller.getModel().isFaceUp()) {
+					localAnnotation.end = e.getPoint();
+					controller.repaint();
+				}
+			}
 		});
 	}
 
@@ -73,7 +98,7 @@ public class PVView {
 		return new Dimension(300, 200);
 	}
 
-	public void paint(Graphics g, PicViewer picViewer) {
+	public void paint(Graphics g, PicViewer picViewer) {		
 		PVModel model = this.controller.getModel();
 		
 		if (img == null) {
@@ -89,11 +114,33 @@ public class PVView {
 				// paint back for annotations
 				g.setColor(Color.WHITE);
 				g.fillRect(0, 0, img.getIconWidth(), img.getIconHeight());
+				
+				g.setColor(Color.RED);
+				drawLines(g, controller.getModel().lineAnnotations);
+				if (localAnnotation.start != null && localAnnotation.end != null) {
+					drawLine(g, localAnnotation);
+				}
 			}
 		}
 	}
 
 	public void setImage(ImageIcon image) {
 		this.img = image;
+	}
+	
+	// draw all lines in line annotation list (from the model)
+	private void drawLines(Graphics g, ArrayList<LineAnnotation> lineAnnotations) {
+		Graphics2D g2d = (Graphics2D) g;
+		
+		for (int i = 0; i < lineAnnotations.size(); i++) {
+			drawLine(g, lineAnnotations.get(i));
+		}
+		
+	}
+	
+	// draw a line based on a line annotation object
+	private void drawLine(Graphics g, LineAnnotation la) {
+		Graphics2D g2d = (Graphics2D) g;
+		g2d.drawLine(la.start.x, la.start.y, la.end.x, la.end.y);
 	}
 }

@@ -8,6 +8,7 @@ import javax.swing.event.ChangeListener;
 public class PVModel {
 
 	private ArrayList<ChangeListener> changeListeners = new ArrayList<>();
+	public ArrayList<LineAnnotation> lineAnnotations = new ArrayList<>();
 	
 	private boolean faceUp = true;
 
@@ -32,6 +33,10 @@ public class PVModel {
 		for (ChangeListener l : changeListeners) {
 			l.stateChanged(new ChangeEvent(this));
 		}
+	}
+
+	public void addLineAnnotation(LineAnnotation la) {
+		lineAnnotations.add(la);
 	}
 
 }
