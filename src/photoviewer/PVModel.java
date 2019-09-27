@@ -36,8 +36,11 @@ public class PVModel {
 	}
 
 	public void addLineAnnotation(LineAnnotation la) {
-		System.out.println("PVModel - add line annotation, size: " + la.points.size());
 		lineAnnotations.add(la);
+	}
+	
+	public ArrayList<LineAnnotation> getLineAnnotations() {
+		return this.lineAnnotations;
 	}
 
 }

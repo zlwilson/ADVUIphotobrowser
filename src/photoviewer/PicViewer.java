@@ -52,7 +52,6 @@ public class PicViewer extends JComponent {
 	}
 
 	public void addLineAnnotation(LineAnnotation la) {
-		System.out.println("PicViewer - add line annotation, size: " + la.points.size());
-		this.getModel().addLineAnnotation(la);;
+		this.getModel().addLineAnnotation(la);
 	}
 }
