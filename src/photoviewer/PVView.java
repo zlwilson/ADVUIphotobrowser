@@ -168,9 +168,6 @@ public class PVView {
 				if (localLineAnnotation.isActive) {
 					drawCurve(g, localLineAnnotation);
 				}
-				
-	        	System.out.print("PVV - draw, text is active: " + localTextAnnotation.isActive);
-	        	System.out.println(", string: " + localTextAnnotation.text);
 
 				if (localTextAnnotation.isActive) {
 					drawString(g, localTextAnnotation);

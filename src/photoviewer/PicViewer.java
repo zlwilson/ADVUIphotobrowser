@@ -60,4 +60,8 @@ public class PicViewer extends JComponent {
 	public void addTextAnnotation(TextAnnotation ta) {
 		this.getModel().addTextAnnotation(ta);
 	}
+
+	public void clearAnnotations() {
+		this.getModel().clearAnnotations();
+	}
 }

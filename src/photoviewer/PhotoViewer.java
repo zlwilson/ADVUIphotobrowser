@@ -95,6 +95,8 @@ public class PhotoViewer extends JFrame {
 		                String pathName = fileChooser.getSelectedFile().getPath();
 		                ImageIcon image = new ImageIcon(pathName);
 		                picViewer.setImage(image);
+		                picViewer.clearAnnotations();
+		                picViewer.getModel().showPhoto();
 		            } else {
 		                JOptionPane.showMessageDialog(null, "Pick one later then");
 		            }

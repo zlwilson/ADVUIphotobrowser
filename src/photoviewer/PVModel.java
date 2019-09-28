@@ -30,6 +30,11 @@ public class PVModel {
 		fireChangeListener();
 	}
 	
+	public void showPhoto(){
+		faceUp = true;
+		fireChangeListener();
+	}
+	
 	private void fireChangeListener() {
 		for (ChangeListener l : changeListeners) {
 			l.stateChanged(new ChangeEvent(this));
@@ -50,5 +55,10 @@ public class PVModel {
 	
 	public ArrayList<TextAnnotation> getTextAnnotations() {
 		return this.textAnnotations;
+	}
+
+	public void clearAnnotations() {
+		this.lineAnnotations = new ArrayList<>();
+		this.textAnnotations = new ArrayList<>();
 	}
 }
