@@ -20,6 +20,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
@@ -69,10 +70,57 @@ public class PhotoViewer extends JFrame {
 		toolBar.setLayout(new BoxLayout(toolBar, BoxLayout.PAGE_AXIS));
 		toolBar.setBackground(new Color(200, 200, 200));
 		toolBar.add(new JLabel("Tool bar:"));
-		toolBar.add(new JToggleButton("People"));
-		toolBar.add(new JToggleButton("Places"));
-		toolBar.add(new JToggleButton("School"));
+		JToggleButton people = new JToggleButton("People", false);
+		people.addActionListener(e -> updateStatus("People"));
+		JToggleButton places = new JToggleButton("Places", false);
+		places.addActionListener(e -> updateStatus("Places"));
+		JToggleButton school = new JToggleButton("School", false);
+		school.addActionListener(e -> updateStatus("School"));
+		toolBar.add(people);
+		toolBar.add(places);
+		toolBar.add(school);
+		
+		// color picker
+		toolBar.add(new JLabel(" Annotation colors: "));
+		JRadioButton red = new JRadioButton("Red", true);
+		red.addActionListener(e -> updateColor(Color.RED));
+		JRadioButton blue = new JRadioButton("Blue", false);
+		blue.addActionListener(e -> updateColor(Color.BLUE));
+		JRadioButton black = new JRadioButton("Black", false);
+		black.addActionListener(e -> updateColor(Color.BLACK));
+		ButtonGroup colorPicker = new ButtonGroup();
+		colorPicker.add(red);
+		colorPicker.add(blue);
+		colorPicker.add(black);
+		toolBar.add(red);
+		toolBar.add(blue);
+		toolBar.add(black);
+		
+		// pen editor
+		toolBar.add(new JLabel(" Pen size: "));
+		JRadioButton small = new JRadioButton("Small", true);
+		small.addActionListener(e -> updatePenSize(1));
+		JRadioButton medium = new JRadioButton("Medium", false);
+		medium.addActionListener(e -> updatePenSize(3));
+		JRadioButton large = new JRadioButton("Large", false);
+		large.addActionListener(e -> updatePenSize(7));
+		ButtonGroup penSizes = new ButtonGroup();
+		penSizes.add(small);
+		penSizes.add(medium);
+		penSizes.add(large);
+		toolBar.add(small);
+		toolBar.add(medium);
+		toolBar.add(large);
+		
 		this.getContentPane().add(toolBar, BorderLayout.EAST);
+	}
+
+	private void updateColor(Color c) {
+		this.picViewer.updateColor(c);
+	}
+	
+	private void updatePenSize(int i) {
+		this.picViewer.updateSize(i);
 	}
 
 	private void makeMenu() {
@@ -124,7 +172,8 @@ public class PhotoViewer extends JFrame {
 		ButtonGroup radioButtons = new ButtonGroup();    
 		radioButtons.add(photoViewer);
 		radioButtons.add(browser);
-		viewMenu.add(photoViewer); viewMenu.add(browser);
+		viewMenu.add(photoViewer);
+		viewMenu.add(browser);
 		
 		menuBar.add(fileMenu);
 		menuBar.add(viewMenu);

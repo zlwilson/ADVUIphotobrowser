@@ -1,5 +1,6 @@
 package photoviewer;
 
+import java.awt.Color;
 import java.util.ArrayList;
 
 import javax.swing.event.ChangeEvent;
@@ -12,6 +13,9 @@ public class PVModel {
 	public ArrayList<TextAnnotation> textAnnotations = new ArrayList<>();
 	
 	private boolean faceUp = true;
+	
+	private Color annotationColor = Color.RED;
+	private int penSize = 1;
 
 	public void addChangeListener(ChangeListener listener) {
 		changeListeners.add(listener);
@@ -60,5 +64,21 @@ public class PVModel {
 	public void clearAnnotations() {
 		this.lineAnnotations = new ArrayList<>();
 		this.textAnnotations = new ArrayList<>();
+	}
+
+	public void setColor(Color c) {
+		this.annotationColor = c;
+	}
+
+	public void setSize(int i) {
+		this.penSize = i;
+	}
+
+	public Color getColor() {
+		return this.annotationColor;
+	}
+
+	public int getPenSize() {
+		return this.penSize;
 	}
 }
