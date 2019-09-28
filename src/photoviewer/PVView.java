@@ -110,7 +110,7 @@ public class PVView {
 			
 			@Override
 			public void keyReleased(KeyEvent e) {
-				// TODO add to text
+				// TODO text wrap
 				if (localTextAnnotation.isActive) {
 					localTextAnnotation.addText(e.getKeyChar());
 					controller.repaint();
@@ -192,12 +192,13 @@ public class PVView {
 	
 	private void drawString(Graphics g, TextAnnotation a) {
 		Graphics2D g2 = (Graphics2D) g;
+		int y = a.location.y;
 		int lineHeight = g.getFontMetrics().getHeight();
 		String string = a.text;
-		g2.drawString(string, a.location.x, a.location.y);
-//		for (String line : string.split("\n")) {
-//			g2.drawString(line, a.location.x, a.location.y += lineHeight);
-//		}
+		for (String line : string.split("\\n")) {
+			g2.drawString(line, a.location.x, y);
+			y += lineHeight;
+		}
 	}
 
 	// draw all lines in line annotation list (from the model)
