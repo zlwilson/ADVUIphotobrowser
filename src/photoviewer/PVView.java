@@ -88,7 +88,7 @@ public class PVView {
 		controller.addMouseMotionListener(new MouseMotionAdapter(){
 			public void mouseDragged(MouseEvent e) {
 				if (!controller.getModel().isFaceUp()) {
-					// its not a text annotation
+					// its not a text annotation, so clear text annotation
 					localTextAnnotation = new TextAnnotation();
 					controller.repaint();
 					
@@ -113,29 +113,44 @@ public class PVView {
 			
 			@Override
 			public void keyReleased(KeyEvent e) {
-				// TODO text wrap on space or character				
 				if (localTextAnnotation.isActive) {
 					FontMetrics fm = graphicContext.getFontMetrics();
-					
 					String currentLine = localTextAnnotation.getLine();
-					
 					int currentLength = fm.stringWidth(currentLine);
+					int lineHeight = fm.getHeight();
 					
-					if (currentLength+localTextAnnotation.location.x >= img.getIconWidth()) {
+					// check if annotation reached the bottom of the photo
+					int textHeight = lineHeight * localTextAnnotation.lines.size();
+					System.out.println("text height = " + textHeight);
+					System.out.println("location = " + localTextAnnotation.lines.size());
+					System.out.println("location = " + localTextAnnotation.location.y);
+					System.out.println("icon height = " + img.getIconHeight());
+					
+					if (localTextAnnotation.location.y+textHeight >= img.getIconHeight()) {
+//						System.out.println("reached the bottom");
+					}
+					
+					// check length of line to see if should wrap
+					if (currentLength+localTextAnnotation.location.x >= img.getIconWidth()-2) {						
 						for (int i = currentLine.length()-1; i >= 0; i--) {
+							
+							// wrap on most recent space character if possible
 							if (currentLine.charAt(i) == ' ') {
 								String remaining = currentLine.substring(i+1);
-								localTextAnnotation.lines[localTextAnnotation.currentLine] = currentLine.substring(0, i-1);
+								localTextAnnotation.lines.remove(localTextAnnotation.currentLine);
+								localTextAnnotation.lines.add(localTextAnnotation.currentLine, currentLine.substring(0, i-1));
 								remaining += Character.toString(e.getKeyChar());
 								localTextAnnotation.newLine(remaining);
 								break;
 							}
+							
+							// no space, therefore wrap on last character
 							if (i == 0) {
-								// only run this line if for loop completes
 								localTextAnnotation.newLine(Character.toString(e.getKeyChar()));
 							}
 						}
 					} else if (e.getKeyCode() == 10) {
+						// return key creates new empty line
 						localTextAnnotation.newLine("");
 					} else {
 						localTextAnnotation.addText(Character.toString(e.getKeyChar()));
@@ -226,17 +241,6 @@ public class PVView {
 			}
 		}
 	}
-	
-//	private void drawString(Graphics g, TextAnnotation a) {
-//		Graphics2D g2 = (Graphics2D) g;
-//		int y = a.location.y;
-//		int lineHeight = g.getFontMetrics().getHeight();
-//		String string = a.text;
-//		for (String line : string.split("\\n")) {
-//			g2.drawString(line, a.location.x, y);
-//			y += lineHeight;
-//		}
-//	}
 
 	// draw all lines in line annotation list (from the model)
 	private void drawLineAnnotations(Graphics g, ArrayList<LineAnnotation> lineAnnotations) {
