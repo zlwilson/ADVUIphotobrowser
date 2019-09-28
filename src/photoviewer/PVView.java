@@ -65,6 +65,12 @@ public class PVView {
 					} else {
 						localLineAnnotation.isActive = false;
 					}
+					
+					// save text when switching from editing text straight to drawing line
+					if (localTextAnnotation.isActive) {
+						controller.addTextAnnotation(localTextAnnotation);
+		        		localTextAnnotation = new TextAnnotation();
+					}
 				}
 			}
 			@Override
@@ -120,18 +126,13 @@ public class PVView {
 					int lineHeight = fm.getHeight();
 					
 					// check if annotation reached the bottom of the photo
+					// if at the bottom save and exit text annotation
 					int textHeight = lineHeight * localTextAnnotation.lines.size();
-					System.out.println("text height = " + textHeight);
-					System.out.println("location = " + localTextAnnotation.lines.size());
-					System.out.println("location = " + localTextAnnotation.location.y);
-					System.out.println("icon height = " + img.getIconHeight());
-					
 					if (localTextAnnotation.location.y+textHeight >= img.getIconHeight()) {
-//						System.out.println("reached the bottom");
-					}
-					
-					// check length of line to see if should wrap
-					if (currentLength+localTextAnnotation.location.x >= img.getIconWidth()-2) {						
+						controller.addTextAnnotation(localTextAnnotation);
+		        		localTextAnnotation = new TextAnnotation();
+					} else if (currentLength+localTextAnnotation.location.x >= img.getIconWidth()-2) {
+						// check length of line to see if should wrap
 						for (int i = currentLine.length()-1; i >= 0; i--) {
 							
 							// wrap on most recent space character if possible
