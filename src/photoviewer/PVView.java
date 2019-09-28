@@ -73,7 +73,6 @@ public class PVView {
 					if (localLineAnnotation.isActive) {
 						saveLineAnnotation();
 					}
-					System.out.println("PVView - MouseReleased: " + controller.getModel().lineAnnotations.size());
 				}
 			}
 			@Override
@@ -114,29 +113,36 @@ public class PVView {
 			
 			@Override
 			public void keyReleased(KeyEvent e) {
-				// TODO text wrap
-				
-				System.out.println(e.getKeyCode());
-				
+				// TODO text wrap on space or character				
 				if (localTextAnnotation.isActive) {
 					FontMetrics fm = graphicContext.getFontMetrics();
 					
-					int stringLength = fm.stringWidth(localTextAnnotation.getLine());
+					String currentLine = localTextAnnotation.getLine();
 					
-					if (stringLength+localTextAnnotation.location.x >= img.getIconWidth()) {
-						localTextAnnotation.newLine(Character.toString(e.getKeyChar()));
-						controller.repaint();
+					int currentLength = fm.stringWidth(currentLine);
+					
+					if (currentLength+localTextAnnotation.location.x >= img.getIconWidth()) {
+						for (int i = currentLine.length()-1; i >= 0; i--) {
+							if (currentLine.charAt(i) == ' ') {
+								String remaining = currentLine.substring(i+1);
+								localTextAnnotation.lines[localTextAnnotation.currentLine] = currentLine.substring(0, i-1);
+								remaining += Character.toString(e.getKeyChar());
+								localTextAnnotation.newLine(remaining);
+								break;
+							}
+							if (i == 0) {
+								// only run this line if for loop completes
+								localTextAnnotation.newLine(Character.toString(e.getKeyChar()));
+							}
+						}
 					} else if (e.getKeyCode() == 10) {
-						System.out.println("Return!");
 						localTextAnnotation.newLine("");
-						controller.repaint();
 					} else {
 						localTextAnnotation.addText(Character.toString(e.getKeyChar()));
-						controller.repaint();
 					}
 				}
+				controller.repaint();
 			}
-			
 		});
 	}
 	
