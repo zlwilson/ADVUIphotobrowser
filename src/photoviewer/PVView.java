@@ -23,6 +23,7 @@ public class PVView {
 	public LineAnnotation localLineAnnotation = new LineAnnotation(false);
 	public TextAnnotation localTextAnnotation = new TextAnnotation();
 	
+	
 	public PVView(String label, PicViewer picViewer) {
 		this.controller = picViewer;
 		this.label = label;
@@ -36,6 +37,16 @@ public class PVView {
 		    public void mouseClicked(MouseEvent e){
 		        if(e.getClickCount()==2){
 		        	controller.doubleClick();
+		        } else if (!controller.getModel().isFaceUp()) {
+		        	// TODO text annotation
+		        	// if existing text annotation -> save, else create new
+		        	if (localTextAnnotation.isActive) {
+		        		// save annotation
+		        	} else {
+		        		localTextAnnotation.location = e.getPoint();
+		        		localTextAnnotation.isActive = true;
+		        		controller.repaint();
+		        	}
 		        }
 		    }
 
@@ -43,14 +54,10 @@ public class PVView {
 			public void mousePressed(MouseEvent e) {
 				if (!controller.getModel().isFaceUp()) {
 					if (e.getPoint().x <= img.getIconWidth() || e.getPoint().y <= img.getIconHeight()) {
-						// TODO check if text or line annotation
-						// make a text and a line annotation
-						// if clicked again (after keys)
+						localLineAnnotation = new LineAnnotation();
 						localLineAnnotation.active = true;
-						localLineAnnotation.points.add(e.getPoint());
 					} else {
 						localLineAnnotation.active = false;
-						localLineAnnotation.points.clear();
 					}
 				}
 			}
@@ -61,7 +68,6 @@ public class PVView {
 						saveLineAnnotation();
 					}
 					System.out.println("PVView - MouseReleased: " + controller.getModel().lineAnnotations.size());
-					System.out.println("PVView - MouseReleased get: " + controller.getModel().getLineAnnotations().size());
 				}
 			}
 			@Override
@@ -77,6 +83,10 @@ public class PVView {
 		controller.addMouseMotionListener(new MouseMotionAdapter(){
 			public void mouseDragged(MouseEvent e) {
 				if (!controller.getModel().isFaceUp()) {
+					// its not a text annotation
+					localTextAnnotation = new TextAnnotation();
+					controller.repaint();
+					
 					if (e.getPoint().x >= img.getIconWidth() || e.getPoint().y >= img.getIconHeight()) {
 						if (localLineAnnotation.active) {
 							saveLineAnnotation();
@@ -84,10 +94,6 @@ public class PVView {
 					} else {
 						localLineAnnotation.active = true;
 						localLineAnnotation.points.add(e.getPoint());
-						
-						// TODO its not a text annotation
-						localTextAnnotation = new TextAnnotation();
-						controller.repaint();
 					}
 				}
 			}
@@ -98,7 +104,6 @@ public class PVView {
 		controller.addLineAnnotation(localLineAnnotation);
 		controller.repaint();
 		localLineAnnotation.active = false;
-		localLineAnnotation.points.clear();
 	}
 
 	public Dimension getPreferredSize() {
@@ -136,7 +141,7 @@ public class PVView {
 				g.setColor(Color.RED);
 				
 				// draw past annotations
-				drawAnnotations(g, controller.getModel().lineAnnotations);
+				drawAnnotations(g, controller.getModel().getLineAnnotations());
 				
 				// draw active annotation
 				if (localLineAnnotation.active) {

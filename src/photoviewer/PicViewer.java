@@ -54,4 +54,8 @@ public class PicViewer extends JComponent {
 	public void addLineAnnotation(LineAnnotation la) {
 		this.getModel().addLineAnnotation(la);
 	}
+	
+	public void addTextAnnotation(TextAnnotation ta) {
+		this.getModel().addTextAnnotation(ta);
+	}
 }

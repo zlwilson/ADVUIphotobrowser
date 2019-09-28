@@ -9,6 +9,7 @@ public class PVModel {
 
 	private ArrayList<ChangeListener> changeListeners = new ArrayList<>();
 	public ArrayList<LineAnnotation> lineAnnotations = new ArrayList<>();
+	public ArrayList<TextAnnotation> textAnnotations = new ArrayList<>();
 	
 	private boolean faceUp = true;
 
@@ -42,5 +43,12 @@ public class PVModel {
 	public ArrayList<LineAnnotation> getLineAnnotations() {
 		return this.lineAnnotations;
 	}
-
+	
+	public void addTextAnnotation(TextAnnotation ta) {
+		textAnnotations.add(ta);
+	}
+	
+	public ArrayList<TextAnnotation> getTextAnnotations() {
+		return this.textAnnotations;
+	}
 }
