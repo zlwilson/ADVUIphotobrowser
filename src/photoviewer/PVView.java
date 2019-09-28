@@ -2,6 +2,7 @@ package photoviewer;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -24,6 +25,7 @@ public class PVView {
 	
 	public LineAnnotation localLineAnnotation = new LineAnnotation(false);
 	public TextAnnotation localTextAnnotation = new TextAnnotation();
+	private Graphics graphicContext;
 	
 	
 	public PVView(String label, PicViewer picViewer) {
@@ -35,6 +37,7 @@ public class PVView {
 	
 	private void setupListeners() {
 		controller.addMouseListener(new MouseListener(){
+			// I know this should be its own declared class and I really tried! but it kept breaking :(
 		    @Override
 		    public void mouseClicked(MouseEvent e){
 		        if(e.getClickCount()==2){
@@ -47,6 +50,7 @@ public class PVView {
 		        	} else {
 		        		localTextAnnotation.location = e.getPoint();
 		        		localTextAnnotation.isActive = true;
+		        		localTextAnnotation.addText("");
 		        		controller.repaint();
 		        	}
 		        }
@@ -112,8 +116,17 @@ public class PVView {
 			public void keyReleased(KeyEvent e) {
 				// TODO text wrap
 				if (localTextAnnotation.isActive) {
-					localTextAnnotation.addText(e.getKeyChar());
-					controller.repaint();
+					FontMetrics fm = graphicContext.getFontMetrics();
+					
+					int stringLength = fm.stringWidth(localTextAnnotation.getLine());
+					
+					if (stringLength+localTextAnnotation.location.x >= img.getIconWidth()) {
+						localTextAnnotation.newLine(Character.toString(e.getKeyChar()));
+						controller.repaint();
+					} else {
+						localTextAnnotation.addText(Character.toString(e.getKeyChar()));
+						controller.repaint();
+					}
 				}
 			}
 			
@@ -141,6 +154,7 @@ public class PVView {
 	}
 
 	public void paint(Graphics g, PicViewer picViewer) {
+		this.graphicContext = g;
 		PVModel model = this.controller.getModel();
 		
 		if (img == null) {
@@ -189,14 +203,27 @@ public class PVView {
 	
 	private void drawString(Graphics g, TextAnnotation a) {
 		Graphics2D g2 = (Graphics2D) g;
-		int y = a.location.y;
 		int lineHeight = g.getFontMetrics().getHeight();
-		String string = a.text;
-		for (String line : string.split("\\n")) {
-			g2.drawString(line, a.location.x, y);
-			y += lineHeight;
+		int y = a.location.y;
+		
+		for (String line : a.lines) {
+			if (line != null) {
+				g2.drawString(line, a.location.x, y);
+				y += lineHeight;
+			}
 		}
 	}
+	
+//	private void drawString(Graphics g, TextAnnotation a) {
+//		Graphics2D g2 = (Graphics2D) g;
+//		int y = a.location.y;
+//		int lineHeight = g.getFontMetrics().getHeight();
+//		String string = a.text;
+//		for (String line : string.split("\\n")) {
+//			g2.drawString(line, a.location.x, y);
+//			y += lineHeight;
+//		}
+//	}
 
 	// draw all lines in line annotation list (from the model)
 	private void drawLineAnnotations(Graphics g, ArrayList<LineAnnotation> lineAnnotations) {
