@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
@@ -37,11 +39,11 @@ public class PVView {
 		    public void mouseClicked(MouseEvent e){
 		        if(e.getClickCount()==2){
 		        	controller.doubleClick();
-		        } else if (!controller.getModel().isFaceUp()) {
-		        	// TODO text annotation
-		        	// if existing text annotation -> save, else create new
+		        } else if (!controller.getModel().isFaceUp()) {		        	
 		        	if (localTextAnnotation.isActive) {
 		        		// save annotation
+		        		controller.addTextAnnotation(localTextAnnotation);
+		        		localTextAnnotation = new TextAnnotation();
 		        	} else {
 		        		localTextAnnotation.location = e.getPoint();
 		        		localTextAnnotation.isActive = true;
@@ -55,16 +57,16 @@ public class PVView {
 				if (!controller.getModel().isFaceUp()) {
 					if (e.getPoint().x <= img.getIconWidth() || e.getPoint().y <= img.getIconHeight()) {
 						localLineAnnotation = new LineAnnotation();
-						localLineAnnotation.active = true;
+						localLineAnnotation.isActive = true;
 					} else {
-						localLineAnnotation.active = false;
+						localLineAnnotation.isActive = false;
 					}
 				}
 			}
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				if (!controller.getModel().isFaceUp()) {
-					if (localLineAnnotation.active) {
+					if (localLineAnnotation.isActive) {
 						saveLineAnnotation();
 					}
 					System.out.println("PVView - MouseReleased: " + controller.getModel().lineAnnotations.size());
@@ -74,7 +76,7 @@ public class PVView {
 			public void mouseEntered(MouseEvent e) { }
 			@Override
 			public void mouseExited(MouseEvent e) {
-				if (localLineAnnotation.active) {
+				if (localLineAnnotation.isActive) {
 					saveLineAnnotation();
 				}
 			}
@@ -88,22 +90,40 @@ public class PVView {
 					controller.repaint();
 					
 					if (e.getPoint().x >= img.getIconWidth() || e.getPoint().y >= img.getIconHeight()) {
-						if (localLineAnnotation.active) {
+						if (localLineAnnotation.isActive) {
 							saveLineAnnotation();
 						}
 					} else {
-						localLineAnnotation.active = true;
+						localLineAnnotation.isActive = true;
 						localLineAnnotation.points.add(e.getPoint());
 					}
 				}
 			}
+		});
+		
+		controller.addKeyListener(new KeyListener(){
+			
+			@Override
+			public void keyTyped(KeyEvent e) { }
+			@Override
+			public void keyPressed(KeyEvent e) { }
+			
+			@Override
+			public void keyReleased(KeyEvent e) {
+				// TODO add to text
+				if (localTextAnnotation.isActive) {
+					localTextAnnotation.addText(e.getKeyChar());
+					controller.repaint();
+				}
+			}
+			
 		});
 	}
 	
 	private void saveLineAnnotation() {
 		controller.addLineAnnotation(localLineAnnotation);
 		controller.repaint();
-		localLineAnnotation.active = false;
+		localLineAnnotation.isActive = false;
 	}
 
 	public Dimension getPreferredSize() {
@@ -141,11 +161,19 @@ public class PVView {
 				g.setColor(Color.RED);
 				
 				// draw past annotations
-				drawAnnotations(g, controller.getModel().getLineAnnotations());
+				drawLineAnnotations(g, controller.getModel().getLineAnnotations());
+				drawTextAnnotations(g, controller.getModel().getTextAnnotations());
 				
-				// draw active annotation
-				if (localLineAnnotation.active) {
+				// draw active annotations
+				if (localLineAnnotation.isActive) {
 					drawCurve(g, localLineAnnotation);
+				}
+				
+	        	System.out.print("PVV - draw, text is active: " + localTextAnnotation.isActive);
+	        	System.out.println(", string: " + localTextAnnotation.text);
+
+				if (localTextAnnotation.isActive) {
+					drawString(g, localTextAnnotation);
 				}
 			}
 		}
@@ -156,7 +184,24 @@ public class PVView {
 	}
 	
 	// draw all lines in line annotation list (from the model)
-	private void drawAnnotations(Graphics g, ArrayList<LineAnnotation> lineAnnotations) {
+	private void drawTextAnnotations(Graphics g, ArrayList<TextAnnotation> textAnnotations) {
+		for (TextAnnotation a : textAnnotations) {
+			drawString(g, a);
+		}
+	}
+	
+	private void drawString(Graphics g, TextAnnotation a) {
+		Graphics2D g2 = (Graphics2D) g;
+		int lineHeight = g.getFontMetrics().getHeight();
+		String string = a.text;
+		g2.drawString(string, a.location.x, a.location.y);
+//		for (String line : string.split("\n")) {
+//			g2.drawString(line, a.location.x, a.location.y += lineHeight);
+//		}
+	}
+
+	// draw all lines in line annotation list (from the model)
+	private void drawLineAnnotations(Graphics g, ArrayList<LineAnnotation> lineAnnotations) {
 		for (LineAnnotation a : lineAnnotations) {
 			drawCurve(g, a);
 		}
@@ -171,7 +216,7 @@ public class PVView {
 	
 	// draw a line based on two points
 	private void drawLine(Graphics g, Point start, Point end) {
-		Graphics2D g2d = (Graphics2D) g;
-		g2d.drawLine(start.x, start.y, end.x, end.y);
+		Graphics2D g2 = (Graphics2D) g;
+		g2.drawLine(start.x, start.y, end.x, end.y);
 	}
 }

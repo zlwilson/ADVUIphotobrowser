@@ -13,6 +13,8 @@ public class PicViewer extends JComponent {
 	public PicViewer(String label){
 		setModel(new PVModel());
 		setView(new PVView(label,this));
+		
+		setFocusable(true);
 	}
 
 	private void setView(PVView v) {
