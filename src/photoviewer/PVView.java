@@ -115,6 +115,9 @@ public class PVView {
 			@Override
 			public void keyReleased(KeyEvent e) {
 				// TODO text wrap
+				
+				System.out.println(e.getKeyCode());
+				
 				if (localTextAnnotation.isActive) {
 					FontMetrics fm = graphicContext.getFontMetrics();
 					
@@ -122,6 +125,10 @@ public class PVView {
 					
 					if (stringLength+localTextAnnotation.location.x >= img.getIconWidth()) {
 						localTextAnnotation.newLine(Character.toString(e.getKeyChar()));
+						controller.repaint();
+					} else if (e.getKeyCode() == 10) {
+						System.out.println("Return!");
+						localTextAnnotation.newLine("");
 						controller.repaint();
 					} else {
 						localTextAnnotation.addText(Character.toString(e.getKeyChar()));
