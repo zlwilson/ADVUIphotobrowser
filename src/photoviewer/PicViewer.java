@@ -63,5 +63,6 @@ public class PicViewer extends JComponent {
 
 	public void clearAnnotations() {
 		this.getModel().clearAnnotations();
+		this.revalidate();
 	}
 }
