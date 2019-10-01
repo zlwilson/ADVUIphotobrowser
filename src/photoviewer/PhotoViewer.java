@@ -3,6 +3,7 @@ package photoviewer;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -69,7 +70,9 @@ public class PhotoViewer extends JFrame {
 		JPanel toolBar = new JPanel();
 		toolBar.setLayout(new BoxLayout(toolBar, BoxLayout.PAGE_AXIS));
 		toolBar.setBackground(new Color(200, 200, 200));
-		toolBar.add(new JLabel("Tool bar:"));
+		JLabel toolTitle = new JLabel("Sorting Tools ");
+		toolTitle.setFont(new Font("Courier New", Font.BOLD, 16));
+		toolBar.add(toolTitle);
 		JToggleButton people = new JToggleButton("People", false);
 		people.addActionListener(e -> updateStatus("People"));
 		JToggleButton places = new JToggleButton("Places", false);
@@ -81,7 +84,10 @@ public class PhotoViewer extends JFrame {
 		toolBar.add(school);
 		
 		// color picker
-		toolBar.add(new JLabel(" Annotation colors: "));
+		JLabel atTitle = new JLabel("Annotation Tools ");
+		atTitle.setFont(new Font("Courier New", Font.BOLD, 16));
+		toolBar.add(atTitle);
+		toolBar.add(new JLabel(" Color:"));
 		JRadioButton red = new JRadioButton("Red", true);
 		red.addActionListener(e -> updateColor(Color.RED));
 		JRadioButton blue = new JRadioButton("Blue", false);
@@ -97,7 +103,7 @@ public class PhotoViewer extends JFrame {
 		toolBar.add(black);
 		
 		// pen editor
-		toolBar.add(new JLabel(" Pen size: "));
+		toolBar.add(new JLabel(" Pen size:"));
 		JRadioButton small = new JRadioButton("Small", true);
 		small.addActionListener(e -> updatePenSize(1));
 		JRadioButton medium = new JRadioButton("Medium", false);

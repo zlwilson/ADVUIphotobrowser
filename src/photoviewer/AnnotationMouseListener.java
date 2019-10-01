@@ -54,8 +54,6 @@ public class AnnotationMouseListener implements MouseListener {
 			if (localLineAnnotation.isActive) {
 				saveLineAnnotation();
 			}
-			System.out.println("PVView - MouseReleased: " + controller.getModel().lineAnnotations.size());
-			System.out.println("PVView - MouseReleased get: " + controller.getModel().getLineAnnotations().size());
 		}
 	}
 	@Override

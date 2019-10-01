@@ -47,6 +47,8 @@ public class PVView {
 		    @Override
 		    public void mouseClicked(MouseEvent e){
 		    	color = controller.getColor();
+		    	System.out.println(color);
+		    	controller.requestFocusInWindow();
 				
 		        if(e.getClickCount()==2){
 		        	controller.doubleClick();
@@ -250,6 +252,7 @@ public class PVView {
 	
 	private void drawString(Graphics g, TextAnnotation a) {
 		Graphics2D g2 = (Graphics2D) g;
+		g2.setColor(a.color);
 		int lineHeight = g.getFontMetrics().getHeight();
 		int y = a.location.y;
 		
@@ -278,7 +281,7 @@ public class PVView {
 	// draw a line based on two points
 	private void drawLine(Graphics g, Point start, Point end, int size, Color c) {
 		Graphics2D g2 = (Graphics2D) g;
-//		g2.setStroke(new BasicStroke(size));
+		g2.setStroke(new BasicStroke(size));
 		g2.setColor(c);
 		g2.drawLine(start.x, start.y, end.x, end.y);
 	}
