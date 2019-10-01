@@ -8,12 +8,18 @@ public class LineAnnotation {
 	
 	public boolean isActive;
 	public ArrayList<Point> points = new ArrayList<>();
+	public Color color;
+	public int size;
 	
-	public LineAnnotation() {
+	public LineAnnotation(Color c, int s) {
 		this.isActive = true;
+		this.color = c;
+		this.size = s;
 	}
 	
-	public LineAnnotation(Boolean active) {
+	public LineAnnotation(Color c, int s, Boolean active) {
 		this.isActive = active;
+		this.color = c;
+		this.size = s;
 	}
 }

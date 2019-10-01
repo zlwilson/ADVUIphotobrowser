@@ -1,5 +1,6 @@
 package photoviewer;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
@@ -22,15 +23,20 @@ public class PVView {
 	private ImageIcon img;
 	private int width;
 	private int height;
+	private Color color;
+	private int penSize;
 	
-	public LineAnnotation localLineAnnotation = new LineAnnotation(false);
-	public TextAnnotation localTextAnnotation = new TextAnnotation();
+	public LineAnnotation localLineAnnotation = new LineAnnotation(color, penSize, false);
+	public TextAnnotation localTextAnnotation = new TextAnnotation(color);
 	private Graphics graphicContext;
 	
 	
 	public PVView(String label, PicViewer picViewer) {
 		this.controller = picViewer;
 		this.label = label;
+		
+		this.color = controller.getColor();
+		this.penSize = controller.getPenSize();
 		
 		setupListeners();
 	}
@@ -40,15 +46,20 @@ public class PVView {
 			// I know this should be its own declared class and I really tried! but it kept breaking :(
 		    @Override
 		    public void mouseClicked(MouseEvent e){
+		    	color = controller.getColor();
+		    	System.out.println(color);
+		    	controller.requestFocusInWindow();
+				
 		        if(e.getClickCount()==2){
 		        	controller.doubleClick();
 		        } else if (!controller.getModel().isFaceUp()) {
 		        	if (localTextAnnotation.isActive) {
 		        		// save annotation
 		        		controller.addTextAnnotation(localTextAnnotation);
-		        		localTextAnnotation = new TextAnnotation();
+		        		localTextAnnotation = new TextAnnotation(color);
 		        	} else {
 		        		localTextAnnotation.location = e.getPoint();
+		        		localTextAnnotation.color = color;
 		        		localTextAnnotation.isActive = true;
 		        		localTextAnnotation.addText("");
 		        		controller.repaint();
@@ -60,7 +71,8 @@ public class PVView {
 			public void mousePressed(MouseEvent e) {
 				if (!controller.getModel().isFaceUp()) {
 					if (e.getPoint().x <= img.getIconWidth() || e.getPoint().y <= img.getIconHeight()) {
-						localLineAnnotation = new LineAnnotation();
+						color = controller.getColor();
+						localLineAnnotation = new LineAnnotation(color, penSize);
 						localLineAnnotation.isActive = true;
 					} else {
 						localLineAnnotation.isActive = false;
@@ -69,7 +81,7 @@ public class PVView {
 					// save text when switching from editing text straight to drawing line
 					if (localTextAnnotation.isActive) {
 						controller.addTextAnnotation(localTextAnnotation);
-		        		localTextAnnotation = new TextAnnotation();
+		        		localTextAnnotation = new TextAnnotation(color);
 					}
 				}
 			}
@@ -92,10 +104,11 @@ public class PVView {
 		});
 		
 		controller.addMouseMotionListener(new MouseMotionAdapter(){
+			
 			public void mouseDragged(MouseEvent e) {
 				if (!controller.getModel().isFaceUp()) {
 					// its not a text annotation, so clear text annotation
-					localTextAnnotation = new TextAnnotation();
+					localTextAnnotation = new TextAnnotation(color);
 					controller.repaint();
 					
 					if (e.getPoint().x >= img.getIconWidth() || e.getPoint().y >= img.getIconHeight()) {
@@ -119,6 +132,9 @@ public class PVView {
 			
 			@Override
 			public void keyReleased(KeyEvent e) {
+				color = controller.getColor();
+				penSize = controller.getPenSize();
+								
 				if (localTextAnnotation.isActive) {
 					FontMetrics fm = graphicContext.getFontMetrics();
 					String currentLine = localTextAnnotation.getLine();
@@ -130,7 +146,7 @@ public class PVView {
 					int textHeight = lineHeight * localTextAnnotation.lines.size();
 					if (localTextAnnotation.location.y+textHeight >= img.getIconHeight()) {
 						controller.addTextAnnotation(localTextAnnotation);
-		        		localTextAnnotation = new TextAnnotation();
+		        		localTextAnnotation = new TextAnnotation(color);
 					} else if (currentLength+localTextAnnotation.location.x >= img.getIconWidth()-2) {
 						// check length of line to see if should wrap
 						for (int i = currentLine.length()-1; i >= 0; i--) {
@@ -190,6 +206,9 @@ public class PVView {
 		PVModel model = this.controller.getModel();
 		this.img = this.controller.getModel().getImage();
 		
+		this.color = controller.getColor();
+		this.penSize = controller.getPenSize();
+		
 		if (img == null) {
 			g.drawString("import a photo from the file menu", 10, 50);
 		} else {
@@ -205,8 +224,8 @@ public class PVView {
 				// paint white background for annotations
 				g.setColor(Color.WHITE);
 				g.fillRect(0, 0, img.getIconWidth(), img.getIconHeight());
-				
-				g.setColor(Color.RED);
+								
+				g.setColor(color);
 				
 				// draw past annotations
 				drawLineAnnotations(g, controller.getModel().getLineAnnotations());
@@ -233,6 +252,7 @@ public class PVView {
 	
 	private void drawString(Graphics g, TextAnnotation a) {
 		Graphics2D g2 = (Graphics2D) g;
+		g2.setColor(a.color);
 		int lineHeight = g.getFontMetrics().getHeight();
 		int y = a.location.y;
 		
@@ -254,13 +274,15 @@ public class PVView {
 	// draw a curve based on a line annotation object
 	private void drawCurve(Graphics g, LineAnnotation annotation) {		
 		for (int i = 0; i < annotation.points.size()-1; i++) {
-			drawLine(g, annotation.points.get(i), annotation.points.get(i+1));
+			drawLine(g, annotation.points.get(i), annotation.points.get(i+1), annotation.size, annotation.color);
 		}
 	}
 	
 	// draw a line based on two points
-	private void drawLine(Graphics g, Point start, Point end) {
+	private void drawLine(Graphics g, Point start, Point end, int size, Color c) {
 		Graphics2D g2 = (Graphics2D) g;
+		g2.setStroke(new BasicStroke(size));
+		g2.setColor(c);
 		g2.drawLine(start.x, start.y, end.x, end.y);
 	}
 }

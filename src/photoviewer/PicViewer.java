@@ -1,5 +1,6 @@
 package photoviewer;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import javax.swing.ImageIcon;
@@ -13,7 +14,7 @@ public class PicViewer extends JComponent {
 	public PicViewer(String label){
 		setModel(new PVModel());
 		setView(new PVView(label,this));
-		
+				
 		setFocusable(true);
 	}
 
@@ -64,5 +65,21 @@ public class PicViewer extends JComponent {
 	public void clearAnnotations() {
 		this.getModel().clearAnnotations();
 		this.revalidate();
+	}
+	
+	public void updateColor(Color c) {
+		this.getModel().setColor(c);
+	}
+	
+	public void updateSize(int i) {
+		this.getModel().setSize(i);
+	}
+
+	public Color getColor() {
+		return this.getModel().getColor();
+	}
+
+	public int getPenSize() {
+		return this.getModel().getPenSize();
 	}
 }

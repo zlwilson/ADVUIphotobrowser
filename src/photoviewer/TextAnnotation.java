@@ -1,5 +1,6 @@
 package photoviewer;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
 
@@ -8,16 +9,25 @@ public class TextAnnotation {
 	public int currentLine;
 	public Point location;
 	public Boolean isActive;
+	public Color color;
+	
+	public TextAnnotation(Color c) {
+		this.isActive = false;
+		this.currentLine = 0;
+		this.lines.add(currentLine, "");
+		this.color = c;
+	}
+
+	public TextAnnotation(Point p, Color c) {
+		this.location = p;
+		this.isActive = true;
+		this.color = c;
+	}
 	
 	public TextAnnotation() {
 		this.isActive = false;
 		this.currentLine = 0;
 		this.lines.add(currentLine, "");
-	}
-
-	public TextAnnotation(Point p) {
-		this.location = p;
-		this.isActive = true;
 	}
 		
 	public void addText(String str) {

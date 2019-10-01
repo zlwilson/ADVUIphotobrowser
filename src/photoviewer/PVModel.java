@@ -1,5 +1,6 @@
 package photoviewer;
 
+import java.awt.Color;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
@@ -14,6 +15,9 @@ public class PVModel {
 	private ImageIcon image;
 	
 	private boolean faceUp = true;
+	
+	private Color annotationColor = Color.RED;
+	private int penSize = 1;
 
 	public void addChangeListener(ChangeListener listener) {
 		changeListeners.add(listener);
@@ -68,6 +72,22 @@ public class PVModel {
 		this.textAnnotations = new ArrayList<>();
 	}
 
+	public void setColor(Color c) {
+		this.annotationColor = c;
+	}
+
+	public void setSize(int i) {
+		this.penSize = i;
+	}
+
+	public Color getColor() {
+		return this.annotationColor;
+	}
+
+	public int getPenSize() {
+		return this.penSize;
+	}
+	
 	public ImageIcon getImage() {
 		return this.image;
 	}

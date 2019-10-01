@@ -3,6 +3,7 @@ package photoviewer;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,6 +21,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
@@ -68,11 +70,65 @@ public class PhotoViewer extends JFrame {
 		JPanel toolBar = new JPanel();
 		toolBar.setLayout(new BoxLayout(toolBar, BoxLayout.PAGE_AXIS));
 		toolBar.setBackground(new Color(200, 200, 200));
-		toolBar.add(new JLabel("Tool bar:"));
-		toolBar.add(new JToggleButton("People"));
-		toolBar.add(new JToggleButton("Places"));
-		toolBar.add(new JToggleButton("School"));
+		JLabel toolTitle = new JLabel("Sorting Tools ");
+		toolTitle.setFont(new Font("Courier New", Font.BOLD, 16));
+		toolBar.add(toolTitle);
+		JToggleButton people = new JToggleButton("People", false);
+		people.addActionListener(e -> updateStatus("People"));
+		JToggleButton places = new JToggleButton("Places", false);
+		places.addActionListener(e -> updateStatus("Places"));
+		JToggleButton school = new JToggleButton("School", false);
+		school.addActionListener(e -> updateStatus("School"));
+		toolBar.add(people);
+		toolBar.add(places);
+		toolBar.add(school);
+		
+		// color picker
+		JLabel atTitle = new JLabel("Annotation Tools ");
+		atTitle.setFont(new Font("Courier New", Font.BOLD, 16));
+		toolBar.add(atTitle);
+		toolBar.add(new JLabel(" Color:"));
+		JRadioButton red = new JRadioButton("Red", true);
+		red.addActionListener(e -> updateColor(Color.RED));
+		JRadioButton blue = new JRadioButton("Blue", false);
+		blue.addActionListener(e -> updateColor(Color.BLUE));
+		JRadioButton black = new JRadioButton("Black", false);
+		black.addActionListener(e -> updateColor(Color.BLACK));
+		ButtonGroup colorPicker = new ButtonGroup();
+		colorPicker.add(red);
+		colorPicker.add(blue);
+		colorPicker.add(black);
+		toolBar.add(red);
+		toolBar.add(blue);
+		toolBar.add(black);
+		
+		// pen editor
+		toolBar.add(new JLabel(" Pen size:"));
+		JRadioButton small = new JRadioButton("Small", true);
+		small.addActionListener(e -> updatePenSize(1));
+		JRadioButton medium = new JRadioButton("Medium", false);
+		medium.addActionListener(e -> updatePenSize(3));
+		JRadioButton large = new JRadioButton("Large", false);
+		large.addActionListener(e -> updatePenSize(7));
+		ButtonGroup penSizes = new ButtonGroup();
+		penSizes.add(small);
+		penSizes.add(medium);
+		penSizes.add(large);
+		toolBar.add(small);
+		toolBar.add(medium);
+		toolBar.add(large);
+		
 		this.getContentPane().add(toolBar, BorderLayout.EAST);
+	}
+
+	private void updateColor(Color c) {
+		this.picViewer.updateColor(c);
+		this.picViewer.setFocusable(true);
+	}
+	
+	private void updatePenSize(int i) {
+		this.picViewer.updateSize(i);
+		this.picViewer.setFocusable(true);
 	}
 
 	private void makeMenu() {
@@ -124,7 +180,8 @@ public class PhotoViewer extends JFrame {
 		ButtonGroup radioButtons = new ButtonGroup();    
 		radioButtons.add(photoViewer);
 		radioButtons.add(browser);
-		viewMenu.add(photoViewer); viewMenu.add(browser);
+		viewMenu.add(photoViewer);
+		viewMenu.add(browser);
 		
 		menuBar.add(fileMenu);
 		menuBar.add(viewMenu);
