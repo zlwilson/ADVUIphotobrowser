@@ -50,7 +50,7 @@ public class PVView {
 				
 		        if(e.getClickCount()==2){
 		        	controller.doubleClick();
-		        } else if (!controller.getModel().isFaceUp()) {		        	
+		        } else if (!controller.getModel().isFaceUp()) {
 		        	if (localTextAnnotation.isActive) {
 		        		// save annotation
 		        		controller.addTextAnnotation(localTextAnnotation);
@@ -199,6 +199,7 @@ public class PVView {
 	public void paint(Graphics g, PicViewer picViewer) {
 		this.graphicContext = g;
 		PVModel model = this.controller.getModel();
+		this.img = this.controller.getModel().getImage();
 		
 		this.color = controller.getColor();
 		this.penSize = controller.getPenSize();
@@ -213,6 +214,7 @@ public class PVView {
 			if (model.isFaceUp()) {
 				// paint image
 				g.drawImage(img.getImage(), 0, 0, null);
+				
 			} else {
 				// paint white background for annotations
 				g.setColor(Color.WHITE);
@@ -234,10 +236,6 @@ public class PVView {
 				}
 			}
 		}
-	}
-
-	public void setImage(ImageIcon image) {
-		this.img = image;
 	}
 	
 	// draw all lines in line annotation list (from the model)

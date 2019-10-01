@@ -23,6 +23,12 @@ public class TextAnnotation {
 		this.isActive = true;
 		this.color = c;
 	}
+	
+	public TextAnnotation() {
+		this.isActive = false;
+		this.currentLine = 0;
+		this.lines.add(currentLine, "");
+	}
 		
 	public void addText(String str) {
 		String s = this.lines.get(currentLine) + str;
