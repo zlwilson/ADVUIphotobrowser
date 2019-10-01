@@ -132,7 +132,7 @@ public class PVView {
 			public void keyReleased(KeyEvent e) {
 				color = controller.getColor();
 				penSize = controller.getPenSize();
-				
+								
 				if (localTextAnnotation.isActive) {
 					FontMetrics fm = graphicContext.getFontMetrics();
 					String currentLine = localTextAnnotation.getLine();
@@ -167,6 +167,9 @@ public class PVView {
 					} else if (e.getKeyCode() == 10) {
 						// return key creates new empty line
 						localTextAnnotation.newLine("");
+					} else if (e.getKeyCode() == 8) {
+						// backspace deletes character
+						localTextAnnotation.delete();
 					} else {
 						localTextAnnotation.addText(Character.toString(e.getKeyChar()));
 					}
