@@ -37,7 +37,7 @@ public class PicViewer extends JComponent {
 	}
 
 	public void setImage(ImageIcon image) {
-		this.view.setImage(image);
+		this.getModel().setImage(image);
 		this.revalidate();
 	}
 

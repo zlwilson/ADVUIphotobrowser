@@ -2,14 +2,16 @@ package photoviewer;
 
 import java.util.ArrayList;
 
+import javax.swing.ImageIcon;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public class PVModel {
 
 	private ArrayList<ChangeListener> changeListeners = new ArrayList<>();
-	public ArrayList<LineAnnotation> lineAnnotations = new ArrayList<>();
-	public ArrayList<TextAnnotation> textAnnotations = new ArrayList<>();
+	private ArrayList<LineAnnotation> lineAnnotations = new ArrayList<>();
+	private ArrayList<TextAnnotation> textAnnotations = new ArrayList<>();
+	private ImageIcon image;
 	
 	private boolean faceUp = true;
 
@@ -40,6 +42,10 @@ public class PVModel {
 			l.stateChanged(new ChangeEvent(this));
 		}
 	}
+	
+	public void setImage(ImageIcon img) {
+		this.image = img;
+	}
 
 	public void addLineAnnotation(LineAnnotation la) {
 		lineAnnotations.add(la);
@@ -60,5 +66,9 @@ public class PVModel {
 	public void clearAnnotations() {
 		this.lineAnnotations = new ArrayList<>();
 		this.textAnnotations = new ArrayList<>();
+	}
+
+	public ImageIcon getImage() {
+		return this.image;
 	}
 }
