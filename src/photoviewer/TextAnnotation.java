@@ -49,10 +49,18 @@ public class TextAnnotation {
 	public String getLine() {
 		return this.lines.get(currentLine);
 	}
-
+	
 	public void delete() {
-		String s = this.lines.get(currentLine).substring(0, this.lines.get(currentLine).length()-1);
-		this.lines.remove(currentLine);
-		this.lines.add(currentLine, s);
+		if (this.lines.size() == 0) {
+			// empty lines, do nothing
+			
+		} else if (this.lines.get(currentLine).length() == 0) {
+			this.lines.remove(currentLine);
+			this.currentLine = currentLine-1;
+		} else {
+			String s = this.lines.get(currentLine).substring(0, this.lines.get(currentLine).length()-1);
+			this.lines.remove(currentLine);
+			this.lines.add(currentLine, s);
+		}
 	}
 }
