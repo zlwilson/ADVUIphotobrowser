@@ -13,6 +13,8 @@ import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -101,6 +103,24 @@ public class PhotoViewer extends JFrame {
 		toolBar.add(red);
 		toolBar.add(blue);
 		toolBar.add(black);
+		
+		// JColorChooser for custom colors
+		JButton colorChooser = new JButton("Custom color...");
+		colorChooser.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Color newColor = JColorChooser.showDialog(PhotoViewer.this, "Choose custom color", picViewer.getColor());
+				if (newColor != null) {
+					picViewer.updateColor(newColor);
+				} else {
+					picViewer.updateColor(Color.RED);
+					red.setSelected(true);
+				}
+			}
+			
+		});
+		toolBar.add(colorChooser);
 		
 		// pen editor
 		toolBar.add(new JLabel(" Pen size:"));
