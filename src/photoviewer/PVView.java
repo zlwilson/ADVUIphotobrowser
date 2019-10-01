@@ -47,7 +47,6 @@ public class PVView {
 		    @Override
 		    public void mouseClicked(MouseEvent e){
 		    	color = controller.getColor();
-		    	System.out.println(color);
 		    	controller.requestFocusInWindow();
 				
 		        if(e.getClickCount()==2){

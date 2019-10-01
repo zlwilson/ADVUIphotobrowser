@@ -123,12 +123,10 @@ public class PhotoViewer extends JFrame {
 
 	private void updateColor(Color c) {
 		this.picViewer.updateColor(c);
-		this.picViewer.setFocusable(true);
 	}
 	
 	private void updatePenSize(int i) {
 		this.picViewer.updateSize(i);
-		this.picViewer.setFocusable(true);
 	}
 
 	private void makeMenu() {
