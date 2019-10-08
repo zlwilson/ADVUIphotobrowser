@@ -182,7 +182,7 @@ public class PhotoViewer extends JFrame {
 			}
 		});
 		JMenuItem delete = new JMenuItem("Delete");
-		delete.addActionListener(e -> updateStatus("delete"));
+		delete.addActionListener(e -> updateStatus("Oops not delete isn't implemented yet!"));
 		JMenuItem quit = new JMenuItem("Quit");
 		quit.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent ev) {
@@ -193,9 +193,9 @@ public class PhotoViewer extends JFrame {
 		
 		// view menu
 		JRadioButtonMenuItem photoViewer = new JRadioButtonMenuItem("Photo Viewer", true);
-		photoViewer.addActionListener(e -> updateStatus("photo viewer"));
+		photoViewer.addActionListener(e -> updateStatus("Photo viewer mode"));
 		JRadioButtonMenuItem browser = new JRadioButtonMenuItem("Browser", false);
-		browser.addActionListener(e -> updateStatus("browser"));
+		browser.addActionListener(e -> updateStatus("Browser mode"));
 		ButtonGroup radioButtons = new ButtonGroup();    
 		radioButtons.add(photoViewer);
 		radioButtons.add(browser);
@@ -209,10 +209,6 @@ public class PhotoViewer extends JFrame {
 	}
 
 	private void updateStatus(String string) {
-		if (string.length() > 10) {
-			this.status.setText(string);
-		} else {
-			this.status.setText("Thanks for selecting " + string);
-		}
+		this.status.setText(string);
 	}
 }
