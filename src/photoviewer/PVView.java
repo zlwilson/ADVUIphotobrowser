@@ -30,20 +30,16 @@ public class PVView {
 	public TextAnnotation localTextAnnotation = new TextAnnotation(color);
 	private Graphics graphicContext;
 	
-	
 	public PVView(String label, PicViewer picViewer) {
 		this.controller = picViewer;
 		this.label = label;
-		
 		this.color = controller.getColor();
 		this.penSize = controller.getPenSize();
-		
 		setupListeners();
 	}
 	
 	private void setupListeners() {
 		controller.addMouseListener(new MouseListener(){
-			// I know this should be its own declared class and I really tried! but it kept breaking :(
 		    @Override
 		    public void mouseClicked(MouseEvent e){
 		    	color = controller.getColor();
@@ -52,6 +48,10 @@ public class PVView {
 		        if(e.getClickCount()==2){
 		        	controller.doubleClick();
 		        } else if (!controller.getModel().isFaceUp()) {
+		        	
+		        	// TODO set selected
+		        	// make a new selection tool
+		        	
 		        	if (localTextAnnotation.isActive) {
 		        		// save annotation
 		        		controller.addTextAnnotation(localTextAnnotation);
@@ -103,7 +103,6 @@ public class PVView {
 		});
 		
 		controller.addMouseMotionListener(new MouseMotionAdapter(){
-			
 			public void mouseDragged(MouseEvent e) {
 				if (!controller.getModel().isFaceUp()) {
 					// its not a text annotation, so clear text annotation
@@ -123,60 +122,23 @@ public class PVView {
 		});
 		
 		controller.addKeyListener(new KeyListener(){
-			
-			@Override
-			public void keyTyped(KeyEvent e) { }
-			@Override
-			public void keyPressed(KeyEvent e) { }
-			
 			@Override
 			public void keyReleased(KeyEvent e) {
 				color = controller.getColor();
 				penSize = controller.getPenSize();
 								
 				if (localTextAnnotation.isActive) {
-					FontMetrics fm = graphicContext.getFontMetrics();
-					String currentLine = localTextAnnotation.getLine();
-					int currentLength = fm.stringWidth(currentLine);
-					int lineHeight = fm.getHeight();
-					
-					// check if annotation reached the bottom of the photo
-					// if at the bottom save and exit text annotation
-					int textHeight = lineHeight * localTextAnnotation.lines.size();
-					if (localTextAnnotation.location.y+textHeight >= img.getIconHeight()) {
-						controller.addTextAnnotation(localTextAnnotation);
-		        		localTextAnnotation = new TextAnnotation(color);
-					} else if (currentLength+localTextAnnotation.location.x >= img.getIconWidth()-2) {
-						// check length of line to see if should wrap
-						for (int i = currentLine.length()-1; i >= 0; i--) {
-							
-							// wrap on most recent space character if possible
-							if (currentLine.charAt(i) == ' ') {
-								String remaining = currentLine.substring(i+1);
-								localTextAnnotation.lines.remove(localTextAnnotation.currentLine);
-								localTextAnnotation.lines.add(localTextAnnotation.currentLine, currentLine.substring(0, i-1));
-								remaining += Character.toString(e.getKeyChar());
-								localTextAnnotation.newLine(remaining);
-								break;
-							}
-							
-							// no space, therefore wrap on last character
-							if (i == 0) {
-								localTextAnnotation.newLine(Character.toString(e.getKeyChar()));
-							}
-						}
-					} else if (e.getKeyCode() == 10) {
-						// return key creates new empty line
-						localTextAnnotation.newLine("");
-					} else if (e.getKeyCode() == 8) {
-						// backspace deletes character
-						localTextAnnotation.delete();
-					} else {
-						localTextAnnotation.addText(Character.toString(e.getKeyChar()));
-					}
+					wrapText(e);
+					// TODO
+//					localTextAnnotation.wrap(e, graphicContext);
 				}
 				controller.repaint();
 			}
+			
+			@Override
+			public void keyTyped(KeyEvent e) { }
+			@Override
+			public void keyPressed(KeyEvent e) { }
 		});
 	}
 	
@@ -232,56 +194,69 @@ public class PVView {
 				
 				// draw active annotations
 				if (localLineAnnotation.isActive) {
-					drawCurve(g, localLineAnnotation);
+					localLineAnnotation.draw(g);
 				}
 
 				if (localTextAnnotation.isActive) {
-					drawString(g, localTextAnnotation);
+					localTextAnnotation.draw(g);
 				}
 			}
 		}
 	}
+
+	// TODO move to text annotation class
+	private void wrapText(KeyEvent e) {
+		FontMetrics fm = graphicContext.getFontMetrics();
+		String currentLine = localTextAnnotation.getLine();
+		int currentLength = fm.stringWidth(currentLine);
+		int lineHeight = fm.getHeight();
+		
+		// check if annotation reached the bottom of the photo, if at the bottom save and exit text annotation
+		int textHeight = lineHeight * localTextAnnotation.lines.size();
+		if (localTextAnnotation.location.y+textHeight >= img.getIconHeight()) {
+			controller.addTextAnnotation(localTextAnnotation);
+			localTextAnnotation = new TextAnnotation(color);
+		} else if (currentLength+localTextAnnotation.location.x >= img.getIconWidth()-2) {
+			// check length of line to see if should wrap
+			for (int i = currentLine.length()-1; i >= 0; i--) {
+				
+				// wrap on most recent space character if possible
+				if (currentLine.charAt(i) == ' ') {
+					String remaining = currentLine.substring(i+1);
+					localTextAnnotation.lines.remove(localTextAnnotation.currentLine);
+					localTextAnnotation.lines.add(localTextAnnotation.currentLine, currentLine.substring(0, i-1));
+					remaining += Character.toString(e.getKeyChar());
+					localTextAnnotation.newLine(remaining);
+					break;
+				}
+				
+				// no space, therefore wrap on last character
+				if (i == 0) {
+					localTextAnnotation.newLine(Character.toString(e.getKeyChar()));
+				}
+			}
+		} else if (e.getKeyCode() == 10) {
+			// return key creates new empty line
+			localTextAnnotation.newLine("");
+		} else if (e.getKeyCode() == 8) {
+			// backspace deletes character
+			localTextAnnotation.delete();
+		} else {
+			localTextAnnotation.addText(Character.toString(e.getKeyChar()));
+		}
+	}
 	
-	// draw all lines in line annotation list (from the model)
+	// TODO fire change listeners
 	private void drawTextAnnotations(Graphics g, ArrayList<TextAnnotation> textAnnotations) {
 		for (TextAnnotation a : textAnnotations) {
-			drawString(g, a);
+			a.draw(g);
 		}
 	}
 	
-	private void drawString(Graphics g, TextAnnotation a) {
-		Graphics2D g2 = (Graphics2D) g;
-		g2.setColor(a.color);
-		int lineHeight = g.getFontMetrics().getHeight();
-		int y = a.location.y;
-		
-		for (String line : a.lines) {
-			if (line != null) {
-				g2.drawString(line, a.location.x, y);
-				y += lineHeight;
-			}
-		}
-	}
-
-	// draw all lines in line annotation list (from the model)
+	// TODO fire change listeners
 	private void drawLineAnnotations(Graphics g, ArrayList<LineAnnotation> lineAnnotations) {
 		for (LineAnnotation a : lineAnnotations) {
-			drawCurve(g, a);
+			a.draw(g);
 		}
-	}
-	
-	// draw a curve based on a line annotation object
-	private void drawCurve(Graphics g, LineAnnotation annotation) {		
-		for (int i = 0; i < annotation.points.size()-1; i++) {
-			drawLine(g, annotation.points.get(i), annotation.points.get(i+1), annotation.size, annotation.color);
-		}
-	}
-	
-	// draw a line based on two points
-	private void drawLine(Graphics g, Point start, Point end, int size, Color c) {
-		Graphics2D g2 = (Graphics2D) g;
-		g2.setStroke(new BasicStroke(size));
-		g2.setColor(c);
-		g2.drawLine(start.x, start.y, end.x, end.y);
 	}
 }

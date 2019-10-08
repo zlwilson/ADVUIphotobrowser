@@ -24,7 +24,7 @@ public class PicViewer extends JComponent {
 
 	private void setModel(PVModel m) {
 		this.model = m;
-		model.addChangeListener(event -> repaint());
+		model.addChangeListener(e -> repaint());
 	}
 	
 	@Override

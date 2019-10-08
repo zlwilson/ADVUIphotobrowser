@@ -1,7 +1,10 @@
 package photoviewer;
 
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 public class TextAnnotation {
@@ -53,7 +56,6 @@ public class TextAnnotation {
 	public void delete() {
 		if (this.lines.size() == 0) {
 			// empty lines, do nothing
-			
 		} else if (this.lines.get(currentLine).length() == 0) {
 			this.lines.remove(currentLine);
 			this.currentLine = currentLine-1;
@@ -62,5 +64,24 @@ public class TextAnnotation {
 			this.lines.remove(currentLine);
 			this.lines.add(currentLine, s);
 		}
+	}
+	
+	public void draw(Graphics g) {
+		Graphics2D g2 = (Graphics2D) g;
+		g2.setColor(this.color);
+		int lineHeight = g.getFontMetrics().getHeight();
+		int y = this.location.y;
+		
+		for (String line : this.lines) {
+			if (line != null) {
+				g2.drawString(line, this.location.x, y);
+				y += lineHeight;
+			}
+		}
+	}
+
+	public void wrap(KeyEvent e, Graphics g) {
+		// TODO Auto-generated method stub
+		
 	}
 }
