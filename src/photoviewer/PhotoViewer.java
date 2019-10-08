@@ -168,6 +168,7 @@ public class PhotoViewer extends JFrame {
 	            	if (response == JFileChooser.APPROVE_OPTION) {
 		                String pathName = fileChooser.getSelectedFile().getPath();
 		                ImageIcon image = new ImageIcon(pathName);
+		                updateStatus("Imported: " + pathName);
 		                picViewer.setImage(image);
 		                picViewer.clearAnnotations();
 		                picViewer.getModel().showPhoto();
@@ -208,7 +209,10 @@ public class PhotoViewer extends JFrame {
 	}
 
 	private void updateStatus(String string) {
-		this.status.setText("Thanks for selecting " + string);
+		if (string.length() > 10) {
+			this.status.setText(string);
+		} else {
+			this.status.setText("Thanks for selecting " + string);
+		}
 	}
-
 }
