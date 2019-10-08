@@ -128,9 +128,7 @@ public class PVView {
 				penSize = controller.getPenSize();
 								
 				if (localTextAnnotation.isActive) {
-					wrapText(e);
-					// TODO
-//					localTextAnnotation.wrap(e, graphicContext);
+					localTextAnnotation.wrap(e, graphicContext, img);
 				}
 				controller.repaint();
 			}
@@ -203,57 +201,15 @@ public class PVView {
 			}
 		}
 	}
-
-	// TODO move to text annotation class
-	private void wrapText(KeyEvent e) {
-		FontMetrics fm = graphicContext.getFontMetrics();
-		String currentLine = localTextAnnotation.getLine();
-		int currentLength = fm.stringWidth(currentLine);
-		int lineHeight = fm.getHeight();
-		
-		// check if annotation reached the bottom of the photo, if at the bottom save and exit text annotation
-		int textHeight = lineHeight * localTextAnnotation.lines.size();
-		if (localTextAnnotation.location.y+textHeight >= img.getIconHeight()) {
-			controller.addTextAnnotation(localTextAnnotation);
-			localTextAnnotation = new TextAnnotation(color);
-		} else if (currentLength+localTextAnnotation.location.x >= img.getIconWidth()-2) {
-			// check length of line to see if should wrap
-			for (int i = currentLine.length()-1; i >= 0; i--) {
-				
-				// wrap on most recent space character if possible
-				if (currentLine.charAt(i) == ' ') {
-					String remaining = currentLine.substring(i+1);
-					localTextAnnotation.lines.remove(localTextAnnotation.currentLine);
-					localTextAnnotation.lines.add(localTextAnnotation.currentLine, currentLine.substring(0, i-1));
-					remaining += Character.toString(e.getKeyChar());
-					localTextAnnotation.newLine(remaining);
-					break;
-				}
-				
-				// no space, therefore wrap on last character
-				if (i == 0) {
-					localTextAnnotation.newLine(Character.toString(e.getKeyChar()));
-				}
-			}
-		} else if (e.getKeyCode() == 10) {
-			// return key creates new empty line
-			localTextAnnotation.newLine("");
-		} else if (e.getKeyCode() == 8) {
-			// backspace deletes character
-			localTextAnnotation.delete();
-		} else {
-			localTextAnnotation.addText(Character.toString(e.getKeyChar()));
-		}
-	}
 	
-	// TODO fire change listeners
+	// TODO use change listeners instead?
+	
 	private void drawTextAnnotations(Graphics g, ArrayList<TextAnnotation> textAnnotations) {
 		for (TextAnnotation a : textAnnotations) {
 			a.draw(g);
 		}
 	}
 	
-	// TODO fire change listeners
 	private void drawLineAnnotations(Graphics g, ArrayList<LineAnnotation> lineAnnotations) {
 		for (LineAnnotation a : lineAnnotations) {
 			a.draw(g);
