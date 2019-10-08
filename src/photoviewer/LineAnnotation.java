@@ -7,7 +7,10 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.util.ArrayList;
 
-public class LineAnnotation {
+import fr.lri.swingstates.canvas.CPolyLine;
+import fr.lri.swingstates.canvas.CShape;
+
+public class LineAnnotation extends CPolyLine {
 	
 	public boolean isActive;
 	public ArrayList<Point> points = new ArrayList<>();

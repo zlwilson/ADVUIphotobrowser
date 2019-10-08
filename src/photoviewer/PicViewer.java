@@ -3,9 +3,17 @@ package photoviewer;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Paint;
+
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.event.ChangeListener;
+
+import fr.lri.swingstates.canvas.CStateMachine;
+import fr.lri.swingstates.canvas.transitions.EnterOnShape;
+import fr.lri.swingstates.canvas.transitions.LeaveOnShape;
+import fr.lri.swingstates.sm.State;
+import fr.lri.swingstates.sm.Transition;
 
 public class PicViewer extends JComponent {
 	private PVModel model;

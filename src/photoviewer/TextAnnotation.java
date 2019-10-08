@@ -10,36 +10,49 @@ import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 
+import fr.lri.swingstates.canvas.CRectangle;
+import fr.lri.swingstates.canvas.CText;
+
 public class TextAnnotation {
 	public ArrayList<String> lines = new ArrayList<>();
 	public int currentLine;
 	public Point location;
 	public Boolean isActive;
 	public Color color;
+	public CRectangle boundingBox;
+	private FontMetrics fm;
 	
 	public TextAnnotation(Color c) {
 		this.isActive = false;
 		this.currentLine = 0;
 		this.lines.add(currentLine, "");
 		this.color = c;
+		this.boundingBox = null;
 	}
 
 	public TextAnnotation(Point p, Color c) {
 		this.location = p;
 		this.isActive = true;
 		this.color = c;
-	}
-	
-	public TextAnnotation() {
-		this.isActive = false;
-		this.currentLine = 0;
-		this.lines.add(currentLine, "");
+		this.boundingBox = new CRectangle(p, 1, 1);
 	}
 		
 	public void addText(String str) {
 		String s = this.lines.get(currentLine) + str;
 		this.lines.remove(currentLine);
 		this.lines.add(currentLine, s);
+		setBoundingBox();
+	}
+	
+	private void setBoundingBox() {
+//		String currentLine = getLine();
+//		int currentLength = fm.stringWidth(currentLine);
+//		int lineHeight = fm.getHeight();
+//		int boxHeight = lineHeight*lines.size();
+//		if (currentLength >= boundingBox.getWidth()) {
+//			// not wide enough
+//			this.boundingBox = new CRectangle(location, currentLength, boxHeight);
+//		}
 	}
 	
 	public void setActive(Point p) {
@@ -50,6 +63,7 @@ public class TextAnnotation {
 	public void newLine(String s) {
 		this.currentLine++;
 		this.lines.add(currentLine, s);
+		setBoundingBox();
 	}
 
 	public String getLine() {
@@ -67,6 +81,7 @@ public class TextAnnotation {
 			this.lines.remove(currentLine);
 			this.lines.add(currentLine, s);
 		}
+		setBoundingBox();
 	}
 	
 	public void draw(Graphics g) {
