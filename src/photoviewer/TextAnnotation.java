@@ -1,10 +1,12 @@
 package photoviewer;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Stroke;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
@@ -69,6 +71,7 @@ public class TextAnnotation {
 		return this.lines.get(currentLine);
 	}
 	
+	// implement delete key
 	public void delete() {
 		if (this.lines.size() == 0) {
 			// empty lines, do nothing
@@ -106,7 +109,6 @@ public class TextAnnotation {
 	public boolean mouseInside(Point p) {
 		if (p.x <= this.width && p.x >= this.location.x && p.y <= this.height && p.y >= this.location.y - 16) {
 			this.isSelected = true;
-			System.out.println("selected");
 			return true;
 		} else {
 			this.isSelected = false;
@@ -114,6 +116,7 @@ public class TextAnnotation {
 		}
 	}
 	
+	// draw a text annotation
 	public void draw(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setColor(this.color);
@@ -131,10 +134,41 @@ public class TextAnnotation {
 		
 		if (isSelected) {
 			g2.setColor(Color.BLUE);
+			Stroke old = g2.getStroke();
+			g2.setStroke(new BasicStroke(1));
 			g2.drawRect(this.location.x, this.location.y-lineHeight, this.width-this.location.x, this.height-this.location.y);
+			g2.setStroke(old);
+		}
+	}
+	
+	// simple wrap for text annotations
+	public void wrapSimple(Graphics g, ImageIcon img) {
+		FontMetrics fm = g.getFontMetrics();
+		String currentLine = this.getLine();
+		int currentLength = fm.stringWidth(currentLine);
+		int lineHeight = fm.getHeight();
+		
+		// check if annotation reached the bottom of the photo, if at the bottom save and exit text annotation
+		int textHeight = lineHeight * this.lines.size();
+		if (this.location.y+textHeight >= img.getIconHeight()) {
+			// end annotation at bottom of image
+		} else if (currentLength+this.location.x >= img.getIconWidth()-2) {
+			// check length of line to see if should wrap
+			for (int i = currentLine.length()-1; i >= 0; i--) {
+				
+				// wrap on most recent space character if possible
+				if (currentLine.charAt(i) == ' ') {
+					String remaining = currentLine.substring(i+1);
+					this.lines.remove(this.currentLine);
+					this.lines.add(this.currentLine, currentLine.substring(0, i-1));
+					this.newLine(remaining);
+					break;
+				}
+			}
 		}
 	}
 
+	// wrapping for text annotation with keyboard events
 	public void wrap(KeyEvent e, Graphics g, ImageIcon img) {
 		FontMetrics fm = g.getFontMetrics();
 		String currentLine = this.getLine();

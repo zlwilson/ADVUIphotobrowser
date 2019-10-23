@@ -76,6 +76,7 @@ public class PicViewer extends JComponent {
 	
 	public void updateSize(int i) {
 		this.getModel().setSize(i);
+		repaint();
 	}
 
 	public Color getColor() {
@@ -87,7 +88,18 @@ public class PicViewer extends JComponent {
 	}
 
 	public boolean selectAnnotations(Point point) {
-		System.out.println("PicViewer: selectAnnotations @ " + point);
 		return this.getModel().selectAnnotations(point);
+	}
+
+	public boolean isAnnotationSelected() {
+		return this.getModel().isAnnotationSelected();
+	}
+
+	public void translate(Point selectionStart, Point currentPoint) {
+		this.getModel().getSelectedAnnotation(selectionStart, currentPoint, this.getGraphics());
+	}
+
+	public void deselectAnnotations() {
+		this.getModel().deselectAnnotations();
 	}
 }

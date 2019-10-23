@@ -30,16 +30,36 @@ public class LineAnnotation {
 	}
 	
 	// TODO fire change listeners instead of drawing?
-	public void draw(Graphics g) {	
+	public void draw(Graphics g) {
+		int stroke;
+		if (isSelected) {
+			stroke = size+2;
+		} else {
+			stroke = size;
+		}
 		for (int i = 0; i < this.points.size()-1; i++) {
-			drawLine(g, this.points.get(i), this.points.get(i+1), this.size, this.color);
+			drawLine(g, this.points.get(i), this.points.get(i+1), stroke, this.color);
 		}
 	}
 	
 	private void drawLine(Graphics g, Point start, Point end, int size, Color c) {
 		Graphics2D g2 = (Graphics2D) g;
-		g2.setStroke(new BasicStroke(size));
 		g2.setColor(c);
 		g2.drawLine(start.x, start.y, end.x, end.y);
+		g2.setStroke(new BasicStroke(size));
+	}
+
+	public boolean mouseInside(Point point) {
+		boolean hit = false;
+		for (Point p : this.points) {
+			if (point.x >= (p.x - 2) && point.x <= (p.x + 2) && point.y >= (p.y - 2) && point.y >= (p.y + 2)) {
+				hit = true;
+				this.isSelected = true;
+				break;
+			} else {
+				this.isSelected = false;
+			}
+		}
+		return hit;
 	}
 }
