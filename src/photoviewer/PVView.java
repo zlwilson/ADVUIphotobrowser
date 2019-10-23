@@ -53,14 +53,15 @@ public class PVView {
 		        	// make a new selection tool
 		        	
 		        	if (localTextAnnotation.isActive) {
-		        		// save annotation
+		        		// clicking out of text annotation to save
 		        		controller.addTextAnnotation(localTextAnnotation);
-		        		localTextAnnotation = new TextAnnotation(color);
-		        	} else {
-		        		localTextAnnotation.location = e.getPoint();
-		        		localTextAnnotation.color = color;
-		        		localTextAnnotation.isActive = true;
-		        		localTextAnnotation.addText("");
+		        	}
+		        	
+		        	if (controller.selectAnnotations(e.getPoint())) {
+		        		controller.selectAnnotations(e.getPoint());
+		        		controller.repaint();
+		        	} else  {
+		        		localTextAnnotation = new TextAnnotation(e.getPoint(), color);
 		        		controller.repaint();
 		        	}
 		        }

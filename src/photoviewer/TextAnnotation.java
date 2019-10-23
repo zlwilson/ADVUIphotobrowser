@@ -16,24 +16,37 @@ public class TextAnnotation {
 	public Point location;
 	public Boolean isActive;
 	public Color color;
+	public Boolean isSelected;
+	public int width = 0;
+	public int height = 0;
 	
 	public TextAnnotation(Color c) {
 		this.isActive = false;
 		this.currentLine = 0;
 		this.lines.add(currentLine, "");
 		this.color = c;
+		this.isSelected = false;
+		this.setBoundingBox();
+	}
+
+	private void setBoundingBox() {
+		this.width = 0;
+		this.height = 0;
 	}
 
 	public TextAnnotation(Point p, Color c) {
 		this.location = p;
 		this.isActive = true;
 		this.color = c;
+		this.lines.add(currentLine, "");
+		this.isSelected = false;
 	}
 	
 	public TextAnnotation() {
 		this.isActive = false;
 		this.currentLine = 0;
 		this.lines.add(currentLine, "");
+		this.isSelected = false;
 	}
 		
 	public void addText(String str) {
@@ -69,17 +82,56 @@ public class TextAnnotation {
 		}
 	}
 	
+	// set max x-value for bounding box for text annotation
+	public void setWidth(Graphics2D g2d) {
+		int maxLineLength = 0;
+		
+		for (String line : this.lines) {
+			FontMetrics fm = g2d.getFontMetrics();
+			int currentLength = fm.stringWidth(line);
+			if (currentLength > maxLineLength) {
+				maxLineLength = currentLength;
+			}
+		}
+		
+		this.width = this.location.x + maxLineLength;
+	}
+	
+	// set max y-value for bounding box for text annotation
+	public void setHeight(int lineHeight) {
+		this.height = this.location.y + lineHeight * this.lines.size();
+	}
+	
+	// check if point is inside text annotation, select annotation if it is
+	public boolean mouseInside(Point p) {
+		if (p.x <= this.width && p.x >= this.location.x && p.y <= this.height && p.y >= this.location.y - 16) {
+			this.isSelected = true;
+			System.out.println("selected");
+			return true;
+		} else {
+			this.isSelected = false;
+			return false;
+		}
+	}
+	
 	public void draw(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setColor(this.color);
 		int lineHeight = g.getFontMetrics().getHeight();
 		int y = this.location.y;
-		
+		this.setHeight(lineHeight);
+		this.setWidth(g2);
+				
 		for (String line : this.lines) {
 			if (line != null) {
 				g2.drawString(line, this.location.x, y);
 				y += lineHeight;
 			}
+		}
+		
+		if (isSelected) {
+			g2.setColor(Color.BLUE);
+			g2.drawRect(this.location.x, this.location.y-lineHeight, this.width-this.location.x, this.height-this.location.y);
 		}
 	}
 

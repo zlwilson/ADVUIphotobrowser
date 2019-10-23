@@ -13,17 +13,20 @@ public class LineAnnotation {
 	public ArrayList<Point> points = new ArrayList<>();
 	public Color color;
 	public int size;
+	public boolean isSelected;
 	
 	public LineAnnotation(Color c, int s) {
 		this.isActive = true;
 		this.color = c;
 		this.size = s;
+		this.isSelected = false;
 	}
 	
 	public LineAnnotation(Color c, int s, Boolean active) {
 		this.isActive = active;
 		this.color = c;
 		this.size = s;
+		this.isSelected = false;
 	}
 	
 	// TODO fire change listeners instead of drawing?

@@ -3,6 +3,8 @@ package photoviewer;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Point;
+
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.event.ChangeListener;
@@ -69,6 +71,7 @@ public class PicViewer extends JComponent {
 	
 	public void updateColor(Color c) {
 		this.getModel().setColor(c);
+		repaint();
 	}
 	
 	public void updateSize(int i) {
@@ -81,5 +84,10 @@ public class PicViewer extends JComponent {
 
 	public int getPenSize() {
 		return this.getModel().getPenSize();
+	}
+
+	public boolean selectAnnotations(Point point) {
+		System.out.println("PicViewer: selectAnnotations @ " + point);
+		return this.getModel().selectAnnotations(point);
 	}
 }

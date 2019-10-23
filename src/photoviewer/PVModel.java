@@ -1,6 +1,7 @@
 package photoviewer;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
@@ -13,6 +14,8 @@ public class PVModel {
 	private ArrayList<LineAnnotation> lineAnnotations = new ArrayList<>();
 	private ArrayList<TextAnnotation> textAnnotations = new ArrayList<>();
 	private ImageIcon image;
+	private TextAnnotation selectedText;
+	private LineAnnotation selectedLine;
 	
 	private boolean faceUp = true;
 	
@@ -74,6 +77,8 @@ public class PVModel {
 
 	public void setColor(Color c) {
 		this.annotationColor = c;
+		this.selectedText.color = c;
+//		this.selectedLine.color = c;
 	}
 
 	public void setSize(int i) {
@@ -90,5 +95,30 @@ public class PVModel {
 	
 	public ImageIcon getImage() {
 		return this.image;
+	}
+
+	public boolean selectAnnotations(Point point) {
+		// TODO Auto-generated method stub
+		boolean insideAnnotation;
+		insideAnnotation = this.selectText(point) || this.selectLine(point);
+		return insideAnnotation;
+	}
+
+	private boolean selectLine(Point point) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	private boolean selectText(Point point) {
+		// TODO Auto-generated method stub
+		System.out.println("Model: selectText @ " + point);
+		boolean onText = false;
+		for (TextAnnotation t : this.textAnnotations) {
+			if (t.mouseInside(point)) {
+				onText = t.mouseInside(point);
+				this.selectedText = t;
+			}
+		}
+		return onText;
 	}
 }
