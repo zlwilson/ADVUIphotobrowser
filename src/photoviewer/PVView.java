@@ -184,16 +184,10 @@ public class PVView {
 			// black background for photos
 			g.setColor(Color.BLACK);
 			g.fillRect(0,0, controller.getSize().width, controller.getSize().height);
+			
+			g.drawImage(img.getImage(), 0, 0, null);
 
-			if (model.isFaceUp()) {
-				// paint image
-				g.drawImage(img.getImage(), 0, 0, null);
-
-			} else {
-				// paint white background for annotations
-				g.setColor(Color.WHITE);
-				g.fillRect(0, 0, img.getIconWidth(), img.getIconHeight());
-
+			if (!model.isFaceUp()) {
 				g.setColor(color);
 
 				// draw past annotations
